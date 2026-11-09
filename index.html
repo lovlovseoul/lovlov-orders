@@ -287,7 +287,7 @@ var I18N={
   unit:'장',roundSuffix:'차',recv:'입고',ship:'출고',today:'오늘',late:'일 지연',
   f_nameKo:'상품명 (한글)',f_nameZh:'상품명 (中文)',f_color:'색상',f_size:'사이즈',f_qty:'주문 수량',f_round:'차수',f_orderDate:'주문일',
   f_purchaser:'구매자',f_style:'스타일 넘버',f_manager:'담당자',f_payment:'결제',f_receivedQty:'입고 수량',f_defectQty:'불량 수량',f_noteKo:'한국 메모',
-  f_factory:'생산처',f_shipDate:'출고일',f_eta:'도착 예정일',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'송장·운송 정보',f_noteZh:'중국 메모',
+  f_factory:'생산처',f_shipDate:'출고일',f_eta:'도착 예정일',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'운송장번호',f_labelSwap:'라벨 교체(갈이)',ls_yes:'가능',ls_no:'불가',ls_unk:'미확인',f_noteZh:'중국 메모',
   blkKR:'한국 입력',blkCN:'중국 입력',ro:'읽기 전용',status:'진행 상태',
   msgs:'메시지',msgPh:'이 주문에 대해 남길 말 (Enter 전송, Shift+Enter 줄바꿈)',send:'보내기',noMsgs:'아직 메시지가 없어요.',
   saved:'저장했어요',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
@@ -311,7 +311,7 @@ var I18N={
   unit:'件',roundSuffix:'批',recv:'入库',ship:'发货',today:'今天',late:'天逾期',
   f_nameKo:'商品名（韩文）',f_nameZh:'商品名（中文）',f_color:'颜色',f_size:'尺码',f_qty:'订单数量',f_round:'批次',f_orderDate:'下单日期',
   f_purchaser:'采购人',f_style:'款号',f_manager:'负责人',f_payment:'付款',f_receivedQty:'入库数量',f_defectQty:'次品数量',f_noteKo:'韩方备注',
-  f_factory:'工厂',f_shipDate:'发货日期',f_eta:'预计到货日',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号·物流信息',f_noteZh:'中方备注',
+  f_factory:'工厂',f_shipDate:'发货日期',f_eta:'预计到货日',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号',f_labelSwap:'可换标签',ls_yes:'可以',ls_no:'不可以',ls_unk:'未确认',f_noteZh:'中方备注',
   blkKR:'韩方填写',blkCN:'中方填写',ro:'只读',status:'当前进度',
   msgs:'留言',msgPh:'针对此订单留言（Enter 发送，Shift+Enter 换行）',send:'发送',noMsgs:'还没有留言。',
   saved:'已保存',saveFail:'保存失败，请检查权限或网络。',
@@ -329,7 +329,7 @@ var I18N={
 var COLOR_ZH={'블랙':'黑色','그레이':'灰色','크림':'奶油色','아이보리':'象牙白','베이지':'米色','브라운':'棕色','화이트':'白色','네이비':'藏青色','카멜':'驼色','미갈색':'米褐色','모카':'摩卡色','레드':'红色','와인':'酒红色'};
 var SIZE_ZH={'free':'均码','one size':'均码','onesize':'均码'};
 var KR_FIELDS=[['color','text'],['size','text'],['qty','number'],['round','text'],['orderDate','date'],['style','text'],['manager','text'],['purchaser','text','purchasers'],['payment','text'],['receivedQty','number'],['defectQty','number'],['noteKo','area']];
-var CN_FIELDS=[['factory','text'],['shipDate','date'],['eta','date'],['etaConf','conf'],['shippedQty','number'],['tracking','text'],['noteZh','area']];
+var CN_FIELDS=[['factory','text'],['labelSwap','lswap'],['shipDate','date'],['eta','date'],['etaConf','conf'],['shippedQty','number'],['tracking','text'],['noteZh','area']];
 
 var S={buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
@@ -385,6 +385,8 @@ function qtyHTML(o){
 function noteHTML(o){
   var h='';
   if(o.noteKo)h+='<div><em>KR</em><span>'+esc(o.noteKo)+'</span></div>';
+  if(o.tracking)h+='<div><em>'+esc(t('f_tracking'))+'</em><span class="mono">'+esc(o.tracking)+'</span></div>';
+  if(o.labelSwap==='yes'||o.labelSwap==='no')h+='<div><em>'+esc(t('f_labelSwap'))+'</em><span>'+esc(t('ls_'+o.labelSwap))+'</span></div>';
   if(o.noteZh)h+='<div><em>CN</em><span>'+esc(o.noteZh)+'</span></div>';
   return h;
 }
@@ -534,6 +536,7 @@ function fieldHTML(f,o,side){
   var inp;
   if(type==='area')inp='<textarea id="f_'+k+'" data-k="'+k+'"'+dis+'>'+esc(v)+'</textarea>';
   else if(type==='brand')inp='<select id="f_'+k+'" data-k="'+k+'"'+dis+'>'+['lovlov','lessetter'].map(function(b){return '<option value="'+b+'"'+(brandOf(o)===b?' selected':'')+'>'+esc(t('b_'+b))+'</option>'}).join('')+'</select>';
+  else if(type==='lswap')inp='<select id="f_'+k+'" data-k="'+k+'"'+dis+'>'+['','yes','no'].map(function(c){return '<option value="'+c+'"'+((o[k]||'')===c?' selected':'')+'>'+esc(t('ls_'+(c||'unk')))+'</option>'}).join('')+'</select>';
   else if(type==='conf')inp='<select id="f_'+k+'" data-k="'+k+'"'+dis+'>'+CONF.map(function(c){return '<option value="'+c+'"'+(confOf(o)===c?' selected':'')+'>'+esc(t('cf_'+c))+'</option>'}).join('')+'</select>';
   else inp='<input id="f_'+k+'" data-k="'+k+'" type="'+type+'"'+(type==='number'?' min="0" inputmode="numeric"':'')+(f[2]?' list="dl_'+f[2]+'"':'')+' value="'+esc(v)+'"'+dis+'>';
   return '<div class="fld'+full+'">'+lab+inp+'</div>';
