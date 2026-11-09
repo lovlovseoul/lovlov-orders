@@ -211,6 +211,7 @@ dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
     <div class="seg" role="group" aria-label="Role">
       <button type="button" id="roleKR" aria-pressed="true">한국 직원</button>
       <button type="button" id="roleCN" aria-pressed="false">中国负责人</button>
+      <button type="button" id="roleMS" aria-pressed="false">마스터</button>
     </div>
     <div class="seg" role="group" aria-label="Language">
       <button type="button" id="langKO" aria-pressed="true">한국어</button>
@@ -334,6 +335,7 @@ var CN_FIELDS=[['factory','text'],['labelSwap','lswap'],['shipDate','date'],['et
 var S={buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
 var $=function(id){return document.getElementById(id)};
+function sd(){return S.role==='master'?'kr':S.role}
 function t(k){return (I18N[S.lang]&&I18N[S.lang][k]!==undefined)?I18N[S.lang][k]:k}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -509,7 +511,7 @@ function renderStatic(){
   $('ttl').textContent=t('ttl');$('sub').textContent=t('sub')+' · '+t('roleHint');
   $('tabList').textContent=t('tabList');$('tabArr').textContent=t('tabArr');$('tabBuy').textContent=t('tabBuy');
   $('q').placeholder=t('search');$('addBtn').textContent=t('add');
-  $('roleKR').setAttribute('aria-pressed',S.role==='kr');$('roleCN').setAttribute('aria-pressed',S.role==='cn');
+  $('roleKR').setAttribute('aria-pressed',S.role==='kr');$('roleCN').setAttribute('aria-pressed',S.role==='cn');$('roleMS').setAttribute('aria-pressed',S.role==='master');
   $('langKO').setAttribute('aria-pressed',S.lang==='ko');$('langZH').setAttribute('aria-pressed',S.lang==='zh');
   $('tabList').setAttribute('aria-selected',S.tab==='list');$('tabArr').setAttribute('aria-selected',S.tab==='arr');$('tabBuy').setAttribute('aria-selected',S.tab==='buy');
   $('viewList').hidden=S.tab!=='list';$('viewArr').hidden=S.tab!=='arr';$('viewBuy').hidden=S.tab!=='buy';
@@ -532,7 +534,7 @@ function renderAll(){
 
 /* drawer */
 function fieldHTML(f,o,side){
-  var k=f[0],type=f[1],dis=(!S.canWrite||(side!=='both'&&S.role!==side))?' disabled':'',v=o[k]==null?'':o[k],lab='<label for="f_'+k+'">'+esc(t('f_'+k))+'</label>',full=(type==='area'||k==='tracking')?' full':'';
+  var k=f[0],type=f[1],dis=(!S.canWrite||(side!=='both'&&S.role!=='master'&&S.role!==side))?' disabled':'',v=o[k]==null?'':o[k],lab='<label for="f_'+k+'">'+esc(t('f_'+k))+'</label>',full=(type==='area'||k==='tracking')?' full':'';
   var inp;
   if(type==='area')inp='<textarea id="f_'+k+'" data-k="'+k+'"'+dis+'>'+esc(v)+'</textarea>';
   else if(type==='brand')inp='<select id="f_'+k+'" data-k="'+k+'"'+dis+'>'+['lovlov','lessetter'].map(function(b){return '<option value="'+b+'"'+(brandOf(o)===b?' selected':'')+'>'+esc(t('b_'+b))+'</option>'}).join('')+'</select>';
@@ -574,7 +576,7 @@ function syncDrawer(first){
   var cur=STATUS.indexOf(o.status)>=0?o.status:'draft',idx=OPEN.concat(['received']).indexOf(cur);
   $('steps').style.setProperty('--c','var(--s-'+cur+')');
   $('steps').innerHTML=OPEN.concat(['received']).map(function(s,j){return '<i class="'+(idx>=0&&j<=idx?'on':'')+'"></i>'}).join('');
-  $('blkKR').classList.toggle('locked',S.role!=='kr');$('blkCN').classList.toggle('locked',S.role!=='cn');
+  $('blkKR').classList.toggle('locked',S.role!=='kr'&&S.role!=='master');$('blkCN').classList.toggle('locked',S.role!=='cn'&&S.role!=='master');
   $('dEdit').textContent=o.updatedAt?t('lastEdit')+' '+fmtT(o.updatedAt)+(o.updatedSide?' · '+(o.updatedSide==='cn'?t('byCN'):t('byKR')):'')+(o.updatedName?' ('+o.updatedName+')':''):'';
   renderPhoto(o);
   renderMsgs();
@@ -595,7 +597,7 @@ function renderMsgs(){
   if(!ms.length){box.innerHTML='<div class="empty" style="padding:10px">'+esc(t('noMsgs'))+'</div>';return}
   var atBottom=box.scrollHeight-box.scrollTop-box.clientHeight<40||box.dataset.n===undefined;
   box.innerHTML=ms.map(function(m){
-    var mine=m.side===S.role&&(!m.name||m.name===uname);
+    var mine=m.side===sd()&&(!m.name||m.name===uname);
     return '<div class="msg'+(mine?' mine':'')+'"><span class="meta"><b>'+(m.side==='cn'?'CN':'KR')+'</b> <span>'+esc(m.name||'')+'</span> · '+esc(fmtT(m.at))+'</span>'+esc(m.text)+'</div>';
   }).join('');
   box.dataset.n=ms.length;
@@ -631,7 +633,7 @@ function startPolling(){clearInterval(pollTimer);pollTimer=setInterval(function(
 function done(p){return p.then(function(){toast(t('saved'))},function(){toast(t('saveFail'))}).then(function(){pending--;lastSig='';return poll()})}
 function save(id,patch){
   var o=byId(id);if(!o||!S.authed)return Promise.resolve();
-  var body=Object.assign({},patch,{updatedAt:Date.now(),updatedName:uname,updatedSide:S.role});
+  var body=Object.assign({},patch,{updatedAt:Date.now(),updatedName:uname,updatedSide:sd()});
   Object.assign(o,body);renderAll();
   pending++;
   return done(rpc('save_order',{p:pass,oid:id,patch:body}));
@@ -639,7 +641,7 @@ function save(id,patch){
 function sendMsg(){
   var ta=$('msgText');if(!ta||!S.authed)return;
   var text=ta.value.trim();if(!text)return;ta.value='';
-  var msg={text:text,side:S.role,name:uname,at:Date.now()},oid=S.openId;
+  var msg={text:text,side:sd(),name:uname,at:Date.now()},oid=S.openId;
   S.msgs.push(Object.assign({id:'tmp'+msg.at,orderId:oid},msg));renderMsgs();renderList();renderArr();
   pending++;
   rpc('add_message',{p:pass,oid:oid,msg:msg}).catch(function(){ta.value=text;toast(t('saveFail'));throw 0}).then(function(){toast(t('saved'))},function(){}).then(function(){pending--;lastSig='';poll()});
@@ -696,6 +698,7 @@ document.addEventListener('click',function(e){
   if(el.classList.contains('row')){openDrawer(el.dataset.id);return}
   switch(el.id){
     case 'roleKR':S.role='kr';lsSet('lvRole','kr');if(!lsGet('lvLangSet')){S.lang='ko'}renderAll();if(S.openId)reopen();break;
+    case 'roleMS':S.role='master';lsSet('lvRole','master');if(!lsGet('lvLangSet')){S.lang='ko'}renderAll();if(S.openId)reopen();break;
     case 'roleCN':S.role='cn';lsSet('lvRole','cn');if(!lsGet('lvLangSet')){S.lang='zh'}renderAll();if(S.openId)reopen();break;
     case 'langKO':S.lang='ko';lsSet('lvLang','ko');lsSet('lvLangSet','1');renderAll();if(S.openId)reopen();break;
     case 'langZH':S.lang='zh';lsSet('lvLang','zh');lsSet('lvLangSet','1');renderAll();if(S.openId)reopen();break;
@@ -734,7 +737,7 @@ $('ndForm').addEventListener('submit',function(e){
   if(!S.authed){$('newDlg').close();return}
   var name=$('ndName').value.trim();if(!name)return;
   var q=$('ndQty').value;
-  var doc={color:$('ndColor').value.trim(),size:$('ndSize').value.trim(),qty:q===''?0:Math.max(0,Number(q)),status:$('ndStat').value,etaConf:'unknown',style:S.addStyle||'',brand:$('ndBrand').value,createdAt:Date.now(),updatedAt:Date.now(),updatedName:uname,updatedSide:S.role};
+  var doc={color:$('ndColor').value.trim(),size:$('ndSize').value.trim(),qty:q===''?0:Math.max(0,Number(q)),status:$('ndStat').value,etaConf:'unknown',style:S.addStyle||'',brand:$('ndBrand').value,createdAt:Date.now(),updatedAt:Date.now(),updatedName:uname,updatedSide:sd()};
   doc.name=name;
   $('newDlg').close();
   var id=newId();S.orders.push(Object.assign({id:id},doc));renderAll();openDrawer(id);pending++;done(rpc('save_order',{p:pass,oid:id,patch:doc}));
@@ -743,7 +746,7 @@ function tabFromHash(){return location.hash==='#arrivals'?'arr':(location.hash==
 window.addEventListener('hashchange',function(){S.tab=tabFromHash();renderAll()});
 
 /* boot */
-S.role=lsGet('lvRole')==='cn'?'cn':'kr';
+S.role=lsGet('lvRole')==='cn'?'cn':(lsGet('lvRole')==='master'?'master':'kr');
 S.brand=['lovlov','lessetter'].indexOf(lsGet('lvBrand'))>=0?lsGet('lvBrand'):'all';
 S.lang=lsGet('lvLang')==='zh'?'zh':(lsGet('lvLang')==='ko'?'ko':(S.role==='cn'?'zh':'ko'));
 S.tab=tabFromHash();
