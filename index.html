@@ -148,6 +148,8 @@ label.btn{cursor:pointer;display:inline-block}
 .ghd .gbtn .gtx{display:block}
 .ghd .gbtn:hover b{text-decoration:underline}
 .blk.locked .fld{opacity:.55}
+.drawer .row.grow{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"prod status" "qty eta" "note note";gap:6px 12px}
+.drawer .row .c-prod{grid-area:prod}.drawer .row .c-status{grid-area:status;justify-self:end}.drawer .row .c-qty{grid-area:qty}.drawer .row .c-eta{grid-area:eta;justify-self:end;text-align:right}.drawer .row .c-note{grid-area:note}.drawer .row .c-msg,.drawer .row .c-round{display:none}
 .gq{font-family:var(--font-mono);font-size:16px;white-space:nowrap}
 .gq small{display:inline;margin-left:3px;font-family:var(--font-body)}
 .c-round{font-size:12px;color:var(--fg2)}
