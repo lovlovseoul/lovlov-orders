@@ -336,6 +336,15 @@ var S={buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
 var $=function(id){return document.getElementById(id)};
 function sd(){return S.role==='master'?'kr':S.role}
+function askMaster(silent){
+  var m=lsGet('lvMasterPw');
+  if(!m){if(silent)return;m=window.prompt('마스터 암호를 입력하세요');if(!m)return}
+  rpc('check_master',{p:pass,m:m}).then(function(ok){
+    if(ok===true){S.role='master';lsSet('lvRole','master');lsSet('lvMasterPw',m);if(!lsGet('lvLangSet'))S.lang='ko';renderAll();if(S.openId)reopen()}
+    else{lsSet('lvMasterPw','');if(!silent)window.alert('마스터 암호가 맞지 않아요.')}
+  },function(){if(!silent)window.alert('서버에 연결하지 못했어요.')});
+}
+function restoreMaster(){if(lsGet('lvRole')==='master'&&lsGet('lvMasterPw'))askMaster(true)}
 function t(k){return (I18N[S.lang]&&I18N[S.lang][k]!==undefined)?I18N[S.lang][k]:k}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -677,7 +686,7 @@ function newId(){return 'o'+Date.now().toString(36)+Math.random().toString(36).s
 function tryLogin(p,n,silent){
   return rpc('get_board',{p:p}).then(function(b){
     pass=p;uname=n;S.authed=true;S.loaded=true;S.conn='live';lsSet('lvPass',p);lsSet('lvName',n);
-    applyBoard(b||{});renderAll();loadThumbs();startPolling();return true;
+    applyBoard(b||{});renderAll();loadThumbs();startPolling();restoreMaster();return true;
   },function(e){
     if(!silent){var el=$('lgErr');el.hidden=false;el.textContent=e.bad?t('lgBad'):t('lgNet')}
     return false;
@@ -698,7 +707,7 @@ document.addEventListener('click',function(e){
   if(el.classList.contains('row')){openDrawer(el.dataset.id);return}
   switch(el.id){
     case 'roleKR':S.role='kr';lsSet('lvRole','kr');if(!lsGet('lvLangSet')){S.lang='ko'}renderAll();if(S.openId)reopen();break;
-    case 'roleMS':S.role='master';lsSet('lvRole','master');if(!lsGet('lvLangSet')){S.lang='ko'}renderAll();if(S.openId)reopen();break;
+    case 'roleMS':askMaster(false);break;
     case 'roleCN':S.role='cn';lsSet('lvRole','cn');if(!lsGet('lvLangSet')){S.lang='zh'}renderAll();if(S.openId)reopen();break;
     case 'langKO':S.lang='ko';lsSet('lvLang','ko');lsSet('lvLangSet','1');renderAll();if(S.openId)reopen();break;
     case 'langZH':S.lang='zh';lsSet('lvLang','zh');lsSet('lvLangSet','1');renderAll();if(S.openId)reopen();break;
@@ -746,7 +755,7 @@ function tabFromHash(){return location.hash==='#arrivals'?'arr':(location.hash==
 window.addEventListener('hashchange',function(){S.tab=tabFromHash();renderAll()});
 
 /* boot */
-S.role=lsGet('lvRole')==='cn'?'cn':(lsGet('lvRole')==='master'?'master':'kr');
+S.role=lsGet('lvRole')==='cn'?'cn':'kr';
 S.brand=['lovlov','lessetter'].indexOf(lsGet('lvBrand'))>=0?lsGet('lvBrand'):'all';
 S.lang=lsGet('lvLang')==='zh'?'zh':(lsGet('lvLang')==='ko'?'ko':(S.role==='cn'?'zh':'ko'));
 S.tab=tabFromHash();
