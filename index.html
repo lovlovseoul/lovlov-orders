@@ -279,7 +279,7 @@ var CONF=['confirmed','estimated','unknown'];
 var I18N={
  ko:{
   ttl:'LOVLOV · LESSETTER 중국사입 주문 현황',sub:'한국 팀과 중국 담당자가 같이 보는 주문 보드',
-  tabList:'주문 목록',tabArr:'도착 일정',tabBuy:'구매 내역',buyTodo:'아직 안 산 것',buyAll:'전체',buyTitle:'구매자별 구매 내역',g_대표님:'대표님 구매',g_우리:'우리 구매',g_none:'구매자 미지정',hProd2:'상품',hColorSize:'색상 / 사이즈',hPay:'결제',hTotal:'합계',add:'주문 추가',search:'상품·색상·메모 검색',
+  tabList:'주문 목록',tabArr:'도착 일정',tabBuy:'구매 내역',buyTodo:'아직 안 산 것',buyAll:'전체',buyTitle:'구매자별 구매 내역',g_대표님:'대표님 구매',g_상민:'상민 구매',g_none:'구매자 미지정',hProd2:'상품',hColorSize:'색상 / 사이즈',hPay:'결제',hTotal:'합계',add:'주문 추가',search:'상품·색상·메모 검색',
   fOpen:'진행 중',fAll:'전체',brandAll:'전체 브랜드',b_lovlov:'로브로브',b_lessetter:'레세터',f_brand:'브랜드',
   st_draft:'발주 전',st_ordered:'발주 완료',st_producing:'생산 중',st_ready:'생산 완료',st_shipped:'출고·운송 중',st_received:'입고 완료',st_hold:'보류',
   cf_confirmed:'확정',cf_estimated:'예정',cf_unknown:'미정',
@@ -303,7 +303,7 @@ var I18N={
  },
  zh:{
   ttl:'LOVLOV · LESSETTER 中国采购订单进度',sub:'韩国团队与中国负责人共用的订单看板',
-  tabList:'订单列表',tabArr:'到货日程',tabBuy:'采购记录',buyTodo:'尚未购买',buyAll:'全部',buyTitle:'按采购人查看采购记录',g_대표님:'老板采购',g_우리:'我们采购',g_none:'未指定采购人',hProd2:'商品',hColorSize:'颜色 / 尺码',hPay:'付款',hTotal:'合计',add:'新增订单',search:'搜索商品、颜色、备注',
+  tabList:'订单列表',tabArr:'到货日程',tabBuy:'采购记录',buyTodo:'尚未购买',buyAll:'全部',buyTitle:'按采购人查看采购记录',g_대표님:'老板采购',g_상민:'상민采购',g_none:'未指定采购人',hProd2:'商品',hColorSize:'颜色 / 尺码',hPay:'付款',hTotal:'合计',add:'新增订单',search:'搜索商品、颜色、备注',
   fOpen:'进行中',fAll:'全部',brandAll:'全部品牌',b_lovlov:'LOVLOV',b_lessetter:'LESSETTER',f_brand:'品牌',
   st_draft:'待下单',st_ordered:'已下单',st_producing:'生产中',st_ready:'生产完成',st_shipped:'已发货·运输中',st_received:'已入库',st_hold:'暂缓',
   cf_confirmed:'已确定',cf_estimated:'预计',cf_unknown:'待定',
@@ -459,7 +459,7 @@ function renderBuy(){
   var src=S.orders.filter(function(o){if(!inBrand(o)||!qOk(o))return false;if(S.buyMode==='todo')return o.status==='draft'||o.status==='hold';return true});
   var gs={},keys=[];
   src.forEach(function(o){var k=String(o.purchaser||'').trim()||'__none';if(!gs[k]){gs[k]=[];keys.push(k)}gs[k].push(o)});
-  var pri={'대표님':0,'우리':1,'__none':99};
+  var pri={'대표님':0,'상민':1,'__none':99};
   keys.sort(function(a,b){var pa=pri[a]==null?50:pri[a],pb=pri[b]==null?50:pri[b];return pa-pb||(a<b?-1:1)});
   var h='<div class="bhd"><b>'+esc(t('buyTitle'))+'</b><div class="seg">'+['todo','all'].map(function(m){return '<button type="button" data-bm="'+m+'" aria-pressed="'+(S.buyMode===m)+'">'+esc(t(m==='todo'?'buyTodo':'buyAll'))+'</button>'}).join('')+'</div></div>';
   if(!keys.length)h+='<div class="table"><div class="empty"><b>'+esc(t('emptyFilter'))+'</b></div></div>';
@@ -548,7 +548,7 @@ function openDrawer(id){
    '<div class="blk"><h3>'+esc(t('common'))+'</h3><div class="grid2">'+fieldHTML(['name','text'],o,'both')+fieldHTML(['brand','brand'],o,'both')+'</div></div>'+
    '<div class="blk" id="blkKR"><h3>'+esc(t('blkKR'))+' <span>KR</span></h3><div class="grid2">'+KR_FIELDS.map(function(f){return fieldHTML(f,o,'kr')}).join('')+'</div></div>'+
    '<div class="blk" id="blkCN"><h3>'+esc(t('blkCN'))+' <span>CN</span></h3><div class="grid2">'+CN_FIELDS.map(function(f){return fieldHTML(f,o,'cn')}).join('')+'</div></div>'+
-   '<datalist id="dl_purchasers"><option value="대표님"><option value="우리"></datalist>'+
+   '<datalist id="dl_purchasers"><option value="대표님"><option value="상민"></datalist>'+
    '<div class="thread"><h3 style="margin:0;font-size:13px">'+esc(t('msgs'))+'</h3><div class="msgs" id="msgs"></div>'+
    '<div class="compose"><textarea id="msgText" placeholder="'+esc(t('msgPh'))+'"'+(S.canWrite?'':' disabled')+'></textarea><button type="button" class="btn primary" id="msgSend"'+(S.canWrite?'':' disabled')+'>'+esc(t('send'))+'</button></div></div>'+
    '<div class="foot"><span id="dEdit"></span><button type="button" class="btn danger" id="dDel"'+(S.canWrite?'':' disabled')+'>'+esc(t('del'))+'</button></div>'+
