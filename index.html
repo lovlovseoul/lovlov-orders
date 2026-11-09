@@ -200,6 +200,7 @@ dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
 @media (max-width:520px){ .grid2{grid-template-columns:1fr} }
 @media (prefers-reduced-motion:no-preference){ .drawer{animation:slide .18s ease-out} @keyframes slide{from{transform:translateX(24px);opacity:0}} }
 .brandbar{margin:0 0 12px;display:inline-flex}.brandbar button b{font-weight:600;margin-left:5px;opacity:.75}.btag{display:inline-block;font-size:11px;font-weight:600;padding:1px 6px;border-radius:5px;margin-right:6px;vertical-align:1px;background:var(--line);color:var(--fg2)}.btag.lessetter{background:#e8dccb;color:#6b4a1e}@media (prefers-color-scheme:dark){.btag.lessetter{background:#4a3a24;color:#e8cfa4}}
+.brow{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 84px 120px minmax(0,1fr) 104px}.bhd{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px}.bhd .seg{display:inline-flex}.btot{font-family:var(--font-mono);font-size:13px;color:var(--fg2)}@media (max-width:860px){.brow{grid-template-columns:1fr auto;grid-template-areas:"prod status" "qty eta" "note note"}.brow .c-prod{grid-area:prod}.brow .c-status{grid-area:status;justify-self:end}.brow .c-qty{grid-area:qty}.brow .c-eta{grid-area:eta;justify-self:end;text-align:right}.brow .c-note{grid-area:note}.brow .c-msg{display:none}}
 </style>
 </head>
 <body>
@@ -235,13 +236,15 @@ dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
     <div class="tabs" role="tablist">
       <button type="button" role="tab" id="tabList" aria-selected="true"></button>
       <button type="button" role="tab" id="tabArr" aria-selected="false"></button>
+      <button type="button" role="tab" id="tabBuy" aria-selected="false"></button>
     </div>
     <input class="search" id="q" type="search" autocomplete="off">
     <button type="button" class="btn primary" id="addBtn"></button>
   </div>
 
   <section id="viewList"></section>
-  <section id="viewArr" hidden></section></div>
+  <section id="viewArr" hidden></section>
+  <section id="viewBuy" hidden></section></div>
 </div></main>
 
 <div id="layer"></div>
@@ -276,7 +279,7 @@ var CONF=['confirmed','estimated','unknown'];
 var I18N={
  ko:{
   ttl:'LOVLOV · LESSETTER 중국사입 주문 현황',sub:'한국 팀과 중국 담당자가 같이 보는 주문 보드',
-  tabList:'주문 목록',tabArr:'도착 일정',add:'주문 추가',search:'상품·색상·메모 검색',
+  tabList:'주문 목록',tabArr:'도착 일정',tabBuy:'구매 내역',buyTodo:'아직 안 산 것',buyAll:'전체',buyTitle:'구매자별 구매 내역',g_대표님:'대표님 구매',g_우리:'우리 구매',g_none:'구매자 미지정',hProd2:'상품',hColorSize:'색상 / 사이즈',hPay:'결제',hTotal:'합계',add:'주문 추가',search:'상품·색상·메모 검색',
   fOpen:'진행 중',fAll:'전체',brandAll:'전체 브랜드',b_lovlov:'로브로브',b_lessetter:'레세터',f_brand:'브랜드',
   st_draft:'발주 전',st_ordered:'발주 완료',st_producing:'생산 중',st_ready:'생산 완료',st_shipped:'출고·운송 중',st_received:'입고 완료',st_hold:'보류',
   cf_confirmed:'확정',cf_estimated:'예정',cf_unknown:'미정',
@@ -300,7 +303,7 @@ var I18N={
  },
  zh:{
   ttl:'LOVLOV · LESSETTER 中国采购订单进度',sub:'韩国团队与中国负责人共用的订单看板',
-  tabList:'订单列表',tabArr:'到货日程',add:'新增订单',search:'搜索商品、颜色、备注',
+  tabList:'订单列表',tabArr:'到货日程',tabBuy:'采购记录',buyTodo:'尚未购买',buyAll:'全部',buyTitle:'按采购人查看采购记录',g_대표님:'老板采购',g_우리:'我们采购',g_none:'未指定采购人',hProd2:'商品',hColorSize:'颜色 / 尺码',hPay:'付款',hTotal:'合计',add:'新增订单',search:'搜索商品、颜色、备注',
   fOpen:'进行中',fAll:'全部',brandAll:'全部品牌',b_lovlov:'LOVLOV',b_lessetter:'LESSETTER',f_brand:'品牌',
   st_draft:'待下单',st_ordered:'已下单',st_producing:'生产中',st_ready:'生产完成',st_shipped:'已发货·运输中',st_received:'已入库',st_hold:'暂缓',
   cf_confirmed:'已确定',cf_estimated:'预计',cf_unknown:'待定',
@@ -328,7 +331,7 @@ var SIZE_ZH={'free':'均码','one size':'均码','onesize':'均码'};
 var KR_FIELDS=[['color','text'],['size','text'],['qty','number'],['round','text'],['orderDate','date'],['style','text'],['manager','text'],['purchaser','text','purchasers'],['payment','text'],['receivedQty','number'],['defectQty','number'],['noteKo','area']];
 var CN_FIELDS=[['factory','text'],['shipDate','date'],['eta','date'],['etaConf','conf'],['shippedQty','number'],['tracking','text'],['noteZh','area']];
 
-var S={brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
+var S={buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
 var $=function(id){return document.getElementById(id)};
 function t(k){return (I18N[S.lang]&&I18N[S.lang][k]!==undefined)?I18N[S.lang][k]:k}
@@ -451,6 +454,27 @@ function renderList(){
   }
   $('viewList').innerHTML=h;
 }
+function qOk(o){if(!S.q)return true;var hay=[o.name,o.nameKo,o.nameZh,o.color,o.size,o.style,o.noteKo,o.noteZh,o.purchaser,o.payment].join(' ').toLowerCase();return hay.indexOf(S.q.toLowerCase())>=0}
+function renderBuy(){
+  var src=S.orders.filter(function(o){if(!inBrand(o)||!qOk(o))return false;if(S.buyMode==='todo')return o.status==='draft'||o.status==='hold';return true});
+  var gs={},keys=[];
+  src.forEach(function(o){var k=String(o.purchaser||'').trim()||'__none';if(!gs[k]){gs[k]=[];keys.push(k)}gs[k].push(o)});
+  var pri={'대표님':0,'우리':1,'__none':99};
+  keys.sort(function(a,b){var pa=pri[a]==null?50:pri[a],pb=pri[b]==null?50:pri[b];return pa-pb||(a<b?-1:1)});
+  var h='<div class="bhd"><b>'+esc(t('buyTitle'))+'</b><div class="seg">'+['todo','all'].map(function(m){return '<button type="button" data-bm="'+m+'" aria-pressed="'+(S.buyMode===m)+'">'+esc(t(m==='todo'?'buyTodo':'buyAll'))+'</button>'}).join('')+'</div></div>';
+  if(!keys.length)h+='<div class="table"><div class="empty"><b>'+esc(t('emptyFilter'))+'</b></div></div>';
+  keys.forEach(function(k){
+    var rows=gs[k].slice().sort(function(a,b){var an=nameOf(a),bn=nameOf(b);if(an!==bn)return an<bn?-1:1;return String(a.color||'')<String(b.color||'')?-1:1});
+    var tot=0;rows.forEach(function(o){tot+=num(o.qty)});
+    var label=k==='__none'?t('g_none'):(t('g_'+k)!=='g_'+k?t('g_'+k):k);
+    h+='<div class="grp" style="--c:var(--fg)"><h3 style="justify-content:space-between"><span>'+esc(label)+' · '+rows.length+esc(t('lines'))+'</span><span class="btot">'+esc(t('hTotal'))+' '+fmtN(tot)+esc(t('unit'))+'</span></h3><div class="table"><div class="head brow"><span>'+esc(t('hProd2'))+'</span><span>'+esc(t('hColorSize'))+'</span><span>'+esc(t('hOq'))+'</span><span>'+esc(t('hPay'))+'</span><span>'+esc(t('hNote'))+'</span><span>'+esc(t('hStatus'))+'</span></div>'+
+     rows.map(function(o){
+       var sub=[colorOf(o),sizeOf(o)].filter(Boolean).join(' · ');
+       return '<button type="button" class="row brow" data-id="'+esc(o.id)+'"><span class="c-prod"><span class="tx"><b>'+(S.brand==='all'?'<span class="btag '+brandOf(o)+'">'+esc(t('b_'+brandOf(o)))+'</span>':'')+esc(nameOf(o))+'</b></span></span><span>'+esc(sub)+'</span><span class="c-qty"><span class="mono">'+fmtN(num(o.qty))+'</span> '+esc(t('unit'))+'</span><span class="c-eta">'+esc(o.payment||'')+'</span><span class="c-note">'+noteHTML(o)+'</span><span class="c-status">'+pill(STATUS.indexOf(o.status)>=0?o.status:'draft')+'</span></button>';
+     }).join('')+'</div></div>';
+  });
+  $('viewBuy').innerHTML=h;
+}
 function renderArr(){
   var src=S.orders.filter(function(o){return inBrand(o)&&ARR.indexOf(o.status)>=0});
   if(S.q){src=src.filter(function(o){var hay=[o.nameKo,o.nameZh,o.color,o.size,o.noteKo,o.noteZh].join(' ').toLowerCase();return hay.indexOf(S.q.toLowerCase())>=0})}
@@ -481,12 +505,12 @@ function renderStatic(){
   document.documentElement.lang=S.lang==='zh'?'zh':'ko';
   document.title=t('ttl');
   $('ttl').textContent=t('ttl');$('sub').textContent=t('sub')+' · '+t('roleHint');
-  $('tabList').textContent=t('tabList');$('tabArr').textContent=t('tabArr');
+  $('tabList').textContent=t('tabList');$('tabArr').textContent=t('tabArr');$('tabBuy').textContent=t('tabBuy');
   $('q').placeholder=t('search');$('addBtn').textContent=t('add');
   $('roleKR').setAttribute('aria-pressed',S.role==='kr');$('roleCN').setAttribute('aria-pressed',S.role==='cn');
   $('langKO').setAttribute('aria-pressed',S.lang==='ko');$('langZH').setAttribute('aria-pressed',S.lang==='zh');
-  $('tabList').setAttribute('aria-selected',S.tab==='list');$('tabArr').setAttribute('aria-selected',S.tab==='arr');
-  $('viewList').hidden=S.tab!=='list';$('viewArr').hidden=S.tab!=='arr';
+  $('tabList').setAttribute('aria-selected',S.tab==='list');$('tabArr').setAttribute('aria-selected',S.tab==='arr');$('tabBuy').setAttribute('aria-selected',S.tab==='buy');
+  $('viewList').hidden=S.tab!=='list';$('viewArr').hidden=S.tab!=='arr';$('viewBuy').hidden=S.tab!=='buy';
   $('connTxt').textContent=t('conn_'+S.conn);$('conn').setAttribute('data-s',S.conn==='slow'?'wait':S.conn);
   $('addBtn').disabled=!S.authed;
   var b=$('banner');
@@ -500,7 +524,7 @@ function renderStatic(){
   $('ndStat').innerHTML=STATUS.map(function(s){return '<option value="'+s+'">'+esc(t('st_'+s))+'</option>'}).join('');$('ndStat').value=cur;
 }
 function renderAll(){
-  renderStatic();renderBrand();renderStrip();renderList();renderArr();
+  renderStatic();renderBrand();renderStrip();renderList();renderArr();renderBuy();
   if(S.openId)syncDrawer();
 }
 
@@ -663,6 +687,7 @@ function logout(wrong){
 document.addEventListener('click',function(e){
   var el=e.target.closest('button,.scrim');if(!el)return;
   if(el.dataset&&el.dataset.add!==undefined){if(!S.authed)return;S.addStyle=el.dataset.style||'';$('ndForm').reset();$('ndStat').value='ordered';$('ndBrand').value=el.dataset.brand||'lovlov';$('ndName').value=el.dataset.add;$('newDlg').showModal();$('ndColor').focus();return}
+  if(el.dataset&&el.dataset.bm){S.buyMode=el.dataset.bm;renderBuy();return}
   if(el.dataset&&el.dataset.b){S.brand=el.dataset.b;lsSet('lvBrand',S.brand);renderAll();return}
   if(el.dataset&&el.dataset.f){S.filter=el.dataset.f;if(S.tab!=='list'){S.tab='list';location.hash='list'}renderAll();return}
   if(el.classList.contains('row')){openDrawer(el.dataset.id);return}
@@ -673,6 +698,7 @@ document.addEventListener('click',function(e){
     case 'langZH':S.lang='zh';lsSet('lvLang','zh');lsSet('lvLangSet','1');renderAll();if(S.openId)reopen();break;
     case 'tabList':S.tab='list';location.hash='list';renderAll();break;
     case 'tabArr':S.tab='arr';location.hash='arrivals';renderAll();break;
+    case 'tabBuy':S.tab='buy';location.hash='buy';renderAll();break;
     case 'addBtn':S.addStyle='';$('ndForm').reset();$('ndBrand').value=S.brand==='lessetter'?'lessetter':'lovlov';$('ndStat').value='draft';$('newDlg').showModal();$('ndName').focus();break;
     case 'ndCancel':$('newDlg').close();break;
     case 'scrim':case 'dClose':closeDrawer();break;
@@ -699,7 +725,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&S.openId&&!$('newDlg').open)closeDrawer();
   if(e.target&&e.target.id==='msgText'&&e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();sendMsg()}
 });
-$('q').addEventListener('input',function(e){S.q=e.target.value.trim();renderList();renderArr()});
+$('q').addEventListener('input',function(e){S.q=e.target.value.trim();renderList();renderArr();renderBuy()});
 $('ndForm').addEventListener('submit',function(e){
   e.preventDefault();
   if(!S.authed){$('newDlg').close();return}
@@ -710,13 +736,14 @@ $('ndForm').addEventListener('submit',function(e){
   $('newDlg').close();
   var id=newId();S.orders.push(Object.assign({id:id},doc));renderAll();openDrawer(id);pending++;done(rpc('save_order',{p:pass,oid:id,patch:doc}));
 });
-window.addEventListener('hashchange',function(){S.tab=location.hash==='#arrivals'?'arr':'list';renderAll()});
+function tabFromHash(){return location.hash==='#arrivals'?'arr':(location.hash==='#buy'?'buy':'list')}
+window.addEventListener('hashchange',function(){S.tab=tabFromHash();renderAll()});
 
 /* boot */
 S.role=lsGet('lvRole')==='cn'?'cn':'kr';
 S.brand=['lovlov','lessetter'].indexOf(lsGet('lvBrand'))>=0?lsGet('lvBrand'):'all';
 S.lang=lsGet('lvLang')==='zh'?'zh':(lsGet('lvLang')==='ko'?'ko':(S.role==='cn'?'zh':'ko'));
-S.tab=location.hash==='#arrivals'?'arr':'list';
+S.tab=tabFromHash();
 renderAll();
 $('loginForm').addEventListener('submit',function(e){e.preventDefault();var n=$('lgName').value.trim(),p=$('lgPass').value;if(!n||!p)return;$('lgErr').hidden=true;tryLogin(p,n,false)});
 $('logoutBtn').addEventListener('click',function(){logout(false)});
