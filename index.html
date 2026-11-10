@@ -154,7 +154,7 @@ label.btn{cursor:pointer;display:inline-block}
 .drawer .row .c-prod{grid-area:prod}.drawer .row .c-status{grid-area:status;justify-self:end}.drawer .row .c-qty{grid-area:qty}.drawer .row .c-eta{grid-area:eta;justify-self:end;text-align:right}.drawer .row .c-note{grid-area:note}.drawer .row .c-msg,.drawer .row .c-round{display:none}
 .gq{font-family:var(--font-mono);font-size:16px;white-space:nowrap}
 .gq small{display:inline;margin-left:3px;font-family:var(--font-body)}
-.c-round{font-size:12px;color:var(--fg2)}
+.c-round{font-size:12px;color:var(--fg2)}.c-round small{display:block;font-size:11px}
 
 /* drawer */
 .scrim{position:fixed;inset:0;background:rgba(10,8,20,.45);z-index:40}
@@ -580,10 +580,11 @@ function renderBrand(){
   var c={all:S.orders.length,lovlov:0,lessetter:0};S.orders.forEach(function(o){c[brandOf(o)]++});
   $('brandbar').innerHTML=['all','lovlov','lessetter'].map(function(b){return '<button type="button" data-b="'+b+'" aria-pressed="'+(S.brand===b)+'">'+esc(b==='all'?t('brandAll'):t('b_'+b))+'<b>'+c[b]+'</b></button>'}).join('');
 }
+function odShort(o){var m=String(o.orderDate||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);return m?(+m[2])+'/'+(+m[3]):''}
 function rowHTML(o){
-  var mc=msgCount(o.id),sub=[sizeOf(o),o.round?o.round+t('roundSuffix'):''].filter(Boolean).join(' · ');
+  var mc=msgCount(o.id),od=odShort(o),sub=[sizeOf(o),o.round?o.round+t('roundSuffix'):'',od].filter(Boolean).join(' · ');
   return '<button type="button" class="row grow'+(S.selMode&&S.sel[o.id]?' sel':'')+'" data-id="'+esc(o.id)+'"><span class="c-prod">'+(S.selMode?'<span class="chk'+(S.sel[o.id]?' on':'')+'"></span>':'')+'<span class="tx"><b>'+esc(colorOf(o)||'—')+'</b><small>'+esc(sub)+'</small></span></span>'+
-    '<span class="c-round">'+esc(o.round?o.round+t('roundSuffix'):'')+'</span><span class="c-qty">'+qtyHTML(o)+'</span>'+
+    '<span class="c-round">'+esc(o.round?o.round+t('roundSuffix'):'')+(od?'<small>'+esc(od)+'</small>':'')+'</span><span class="c-qty">'+qtyHTML(o)+'</span>'+
     '<span class="c-status">'+pill(STATUS.indexOf(o.status)>=0?o.status:'draft')+'</span><span class="c-eta">'+etaHTML(o)+'</span>'+
     '<span class="c-note">'+noteHTML(o)+'</span><span class="c-msg">'+(mc?'<span class="badge">'+mc+'</span>':'')+'</span></button>';
 }
