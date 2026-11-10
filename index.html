@@ -148,6 +148,8 @@ label.btn{cursor:pointer;display:inline-block}
 .ghd .gbtn .gtx{display:block}
 .ghd .gbtn:hover b{text-decoration:underline}
 .blk.locked .fld{opacity:.55}
+.gsl{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:11px;color:var(--fg2);text-align:right}
+.gsl svg{display:block}
 .drawer .row.grow{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"prod status" "qty eta" "note note";gap:6px 12px}
 .drawer .row .c-prod{grid-area:prod}.drawer .row .c-status{grid-area:status;justify-self:end}.drawer .row .c-qty{grid-area:qty}.drawer .row .c-eta{grid-area:eta;justify-self:end;text-align:right}.drawer .row .c-note{grid-area:note}.drawer .row .c-msg,.drawer .row .c-round{display:none}
 .gq{font-family:var(--font-mono);font-size:16px;white-space:nowrap}
@@ -294,7 +296,7 @@ var I18N={
   unit:'장',roundSuffix:'차',recv:'입고',ship:'출고',today:'오늘',late:'일 지연',
   f_nameKo:'상품명 (한글)',f_nameZh:'상품명 (中文)',f_color:'색상',f_size:'사이즈',f_qty:'주문 수량',f_round:'차수',f_orderDate:'주문일',
   f_purchaser:'구매자',f_style:'스타일 넘버',f_manager:'담당자',f_payment:'결제',f_receivedQty:'입고 수량',f_defectQty:'불량 수량',f_noteKo:'한국 메모',
-  f_factory:'생산처',f_shipDate:'출고일',f_eta:'도착 예정일',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'운송장번호',f_labelSwap:'라벨 교체(갈이)',ls_yes:'가능',ls_no:'불가',ls_unk:'미확인',grpMixed:'여러 값',grpHint:'아래 칸을 바꾸면 이 상품의 모든 옵션에 한꺼번에 적용돼요.',grpOpts:'옵션별 보기',f_noteZh:'중국 메모',
+  f_factory:'생산처',f_shipDate:'출고일',f_eta:'도착 예정일',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'운송장번호',f_labelSwap:'라벨 교체(갈이)',ls_yes:'가능',ls_no:'불가',ls_unk:'미확인',grpMixed:'여러 값',grpHint:'아래 칸을 바꾸면 이 상품의 모든 옵션에 한꺼번에 적용돼요.',grpOpts:'옵션별 보기',salesTitle:'판매 추이',salesSince:'10월~ 누적 판매',sales7:'최근 7일',salesAvg:'일평균(7일)',stockAvail:'가용 재고',stockQty:'재고',cover:'재고 소진 예상',daysUnit:'일',sColor:'컬러',sSize:'사이즈',noSales:'매칭되는 판매 데이터가 없어요. (상품명이 판매 대시보드와 다를 수 있어요)',salesLoading:'판매 데이터를 불러오는 중…',salesFail:'판매 데이터를 불러오지 못했어요.',openDash:'판매 대시보드 열기',f_noteZh:'중국 메모',
   blkKR:'한국 입력',blkCN:'중국 입력',ro:'읽기 전용',status:'진행 상태',
   msgs:'메시지',msgPh:'이 주문에 대해 남길 말 (Enter 전송, Shift+Enter 줄바꿈)',send:'보내기',noMsgs:'아직 메시지가 없어요.',
   saved:'저장했어요',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
@@ -318,7 +320,7 @@ var I18N={
   unit:'件',roundSuffix:'批',recv:'入库',ship:'发货',today:'今天',late:'天逾期',
   f_nameKo:'商品名（韩文）',f_nameZh:'商品名（中文）',f_color:'颜色',f_size:'尺码',f_qty:'订单数量',f_round:'批次',f_orderDate:'下单日期',
   f_purchaser:'采购人',f_style:'款号',f_manager:'负责人',f_payment:'付款',f_receivedQty:'入库数量',f_defectQty:'次品数量',f_noteKo:'韩方备注',
-  f_factory:'工厂',f_shipDate:'发货日期',f_eta:'预计到货日',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号',f_labelSwap:'可换标签',ls_yes:'可以',ls_no:'不可以',ls_unk:'未确认',grpMixed:'多个值',grpHint:'修改下方内容将一次性应用到该商品的所有选项。',grpOpts:'按选项查看',f_noteZh:'中方备注',
+  f_factory:'工厂',f_shipDate:'发货日期',f_eta:'预计到货日',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号',f_labelSwap:'可换标签',ls_yes:'可以',ls_no:'不可以',ls_unk:'未确认',grpMixed:'多个值',grpHint:'修改下方内容将一次性应用到该商品的所有选项。',grpOpts:'按选项查看',salesTitle:'销售趋势',salesSince:'10月起累计销量',sales7:'近7天',salesAvg:'日均(7天)',stockAvail:'可用库存',stockQty:'库存',cover:'预计可售天数',daysUnit:'天',sColor:'颜色',sSize:'尺码',noSales:'没有匹配的销售数据。',salesLoading:'正在加载销售数据…',salesFail:'无法加载销售数据。',openDash:'打开销售看板',f_noteZh:'中方备注',
   blkKR:'韩方填写',blkCN:'中方填写',ro:'只读',status:'当前进度',
   msgs:'留言',msgPh:'针对此订单留言（Enter 发送，Shift+Enter 换行）',send:'发送',noMsgs:'还没有留言。',
   saved:'已保存',saveFail:'保存失败，请检查权限或网络。',
@@ -342,6 +344,89 @@ var S={buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
 var $=function(id){return document.getElementById(id)};
 function sd(){return S.role==='master'?'kr':S.role}
+var SALES={ready:false,busy:false,failed:false,at:0,days:[],byKo:{},byEn:{},stk:{},asof:'',salesTo:''};
+var SALES_BASE='https://lovlovseoul.github.io/lovlovsales/';
+function normK(s){return String(s==null?'':s).toUpperCase().replace(/[^0-9A-Z가-힣]/g,'')}
+function parseDM(h){
+  var i=h.indexOf('const DM=');if(i<0)return null;
+  var s=i+9,d=0,q=null,esc2=false,e=-1;
+  for(var k=s;k<h.length;k++){
+    var ch=h.charAt(k);
+    if(q){if(esc2)esc2=false;else if(ch==='\\')esc2=true;else if(ch===q)q=null;continue}
+    if(ch==='"'||ch==="'"){q=ch;continue}
+    if(ch==='{'||ch==='[')d++;
+    else if(ch==='}'||ch===']'){d--;if(d===0){e=k+1;break}}
+  }
+  return e>0?JSON.parse(h.slice(s,e)):null;
+}
+function loadSales(force){
+  if(SALES.busy||(SALES.ready&&!force&&Date.now()-SALES.at<600000))return;
+  SALES.busy=true;
+  var ft=function(u){return fetch(u,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('http');return r.text()})};
+  Promise.all([ft(SALES_BASE+'sales.html'),ft(SALES_BASE+'lessetter.html').catch(function(){return ''}),ft(SALES_BASE+'stock.json')]).then(function(r){
+    var st=JSON.parse(r[2]),byKo={},byEn={},stk={},days={};
+    [r[0],r[1]].forEach(function(h){
+      if(!h)return;var DM=parseDM(h);if(!DM)return;
+      Object.keys(DM).sort().forEach(function(mk){
+        if(mk<'2026-10')return;var c=DM[mk].combined;if(!c)return;
+        Object.keys(c.dayTotals||{}).forEach(function(d){days[d]=1});
+        Object.keys(c.dayTop||{}).forEach(function(d){
+          days[d]=1;
+          (c.dayTop[d]||[]).forEach(function(it){
+            var k=normK(it.name),o=byKo[k]||(byKo[k]={ko:it.name,s:{}}),x=o.s[d]||(o.s[d]=[0,0]);
+            x[0]+=it.qty||0;x[1]+=it.amt||0;
+          });
+        });
+      });
+    });
+    Object.keys(st.P||{}).forEach(function(ko){var p=st.P[ko],k=normK(ko);stk[k]={ko:ko,p:p};if(p&&p.en)byEn[normK(p.en)]=k});
+    var dl=Object.keys(days).sort();if(st.salesTo)dl=dl.filter(function(d){return d<=st.salesTo});
+    SALES.byKo=byKo;SALES.byEn=byEn;SALES.stk=stk;SALES.days=dl;SALES.asof=st.asof||'';SALES.salesTo=st.salesTo||'';
+    SALES.ready=true;SALES.failed=false;SALES.at=Date.now();SALES.busy=false;
+    renderAll();
+    if(S.grp){var ae=document.activeElement;if(!(ae&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName)&&ae.closest('.drawer'))){var sc=document.querySelector('.drawer .dbody'),top=sc?sc.scrollTop:0;openGroup(S.grp);var sc2=document.querySelector('.drawer .dbody');if(sc2)sc2.scrollTop=top}}
+  }).catch(function(){SALES.busy=false;SALES.failed=true;SALES.at=Date.now()});
+}
+function salesOf(rows){
+  if(!SALES.ready||!rows||!rows.length)return null;
+  var keys=[];rows.forEach(function(o){keys.push(normK(o.nameKo));keys.push(normK(o.name))});
+  var k=null;
+  for(var i=0;i<keys.length&&!k;i++){var x=keys[i];if(!x)continue;if(SALES.byKo[x]||SALES.stk[x])k=x;else if(SALES.byEn[x])k=SALES.byEn[x]}
+  if(!k)return null;
+  var s=(SALES.byKo[k]||{}).s||{},qty=SALES.days.map(function(d){return s[d]?s[d][0]:0}),amt=SALES.days.map(function(d){return s[d]?s[d][1]:0});
+  var sum=function(a){return a.reduce(function(p,c){return p+c},0)},n=qty.length,l7=sum(qty.slice(Math.max(0,n-7)));
+  var sk=SALES.stk[k],p=sk&&sk.p,avail=null;
+  if(p&&p.o){avail=0;p.o.forEach(function(x){avail+=num(x.av)})}
+  return {k:k,ko:(SALES.byKo[k]||sk||{}).ko,qty:qty,amt:amt,total:sum(qty),totalAmt:sum(amt),l7:l7,avg7:l7/7,p:p,avail:avail};
+}
+function sparkSVG(a,w,h){
+  var n=a.length;if(!n)return '';
+  var mx=Math.max.apply(null,a.concat([1])),bw=w/n,out='';
+  for(var i=0;i<n;i++){var bh=Math.max(a[i]>0?1.5:0,a[i]/mx*(h-2));out+='<rect x="'+(i*bw+0.4).toFixed(1)+'" y="'+(h-bh).toFixed(1)+'" width="'+Math.max(0.8,bw-0.8).toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="0.6"/>'}
+  return '<svg viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" fill="currentColor" aria-hidden="true" style="color:var(--accent)">'+out+'</svg>';
+}
+function salesMini(rows){
+  var s=salesOf(rows);if(!s)return '';
+  var tail=s.qty.slice(-21);
+  return '<span class="gsl mono"><span>'+esc(t('sales7'))+' '+fmtN(s.l7)+' · '+esc(t('salesSince'))+' '+fmtN(s.total)+(s.avail!=null?' · '+esc(t('stockAvail'))+' '+fmtN(s.avail):'')+'</span>'+sparkSVG(tail,84,22)+'</span>';
+}
+function salesBlock(rows){
+  var h3='<h3>'+esc(t('salesTitle'))+' <span>'+esc(SALES.asof||'')+'</span></h3>';
+  if(!SALES.ready)return '<div class="blk">'+h3+'<p style="margin:0;font-size:13px;color:var(--fg2)">'+esc(t(SALES.failed?'salesFail':'salesLoading'))+'</p></div>';
+  var s=salesOf(rows);
+  if(!s)return '<div class="blk">'+h3+'<p style="margin:0;font-size:13px;color:var(--fg2)">'+esc(t('noSales'))+'</p></div>';
+  var n=s.qty.length,W=600,H=120,bw=W/Math.max(1,n),mx=Math.max.apply(null,s.qty.concat([1])),bars='';
+  for(var i=0;i<n;i++){var bh=s.qty[i]/mx*(H-14),x=i*bw;bars+='<rect x="'+(x+1).toFixed(1)+'" y="'+(H-bh).toFixed(1)+'" width="'+Math.max(1,bw-2).toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="1.5"><title>'+esc(SALES.days[i]+' · '+s.qty[i]+t('unit'))+'</title></rect>'}
+  var chart='<svg viewBox="0 0 '+W+' '+(H+16)+'" width="100%" role="img" aria-label="'+esc(t('salesTitle'))+'" style="display:block;color:var(--accent)" fill="currentColor">'+bars+'<text x="0" y="'+(H+13)+'" font-size="10" fill="var(--fg2)">'+esc((SALES.days[0]||'').slice(5))+'</text><text x="'+W+'" y="'+(H+13)+'" font-size="10" text-anchor="end" fill="var(--fg2)">'+esc((SALES.days[n-1]||'').slice(5))+'</text><text x="'+W+'" y="9" font-size="10" text-anchor="end" fill="var(--fg2)">max '+mx+'</text></svg>';
+  var cover=(s.avail!=null&&s.avg7>0&&s.avail>0)?Math.round(s.avail/s.avg7):null;
+  var tile=function(l,v){return '<div style="flex:1 1 110px;background:var(--surface2);border-radius:8px;padding:8px 10px"><div style="font-size:11px;color:var(--fg2)">'+esc(l)+'</div><div class="mono" style="font-size:16px;font-weight:600">'+v+'</div></div>'};
+  var tiles='<div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px">'+tile(t('salesSince'),fmtN(s.total)+esc(t('unit')))+tile(t('sales7'),fmtN(s.l7)+esc(t('unit')))+tile(t('salesAvg'),s.avg7.toFixed(1)+esc(t('unit')))+(s.avail!=null?tile(t('stockAvail'),fmtN(s.avail)+esc(t('unit'))):'')+(cover!=null?tile(t('cover'),fmtN(cover)+esc(t('daysUnit'))):'')+'</div>';
+  var opt='';
+  if(s.p&&s.p.o&&s.p.o.length){opt='<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:10px"><thead><tr style="color:var(--fg2);text-align:left"><th style="padding:4px 0">'+esc(t('sColor'))+'</th><th>'+esc(t('sSize'))+'</th><th style="text-align:right">'+esc(t('stockQty'))+'</th><th style="text-align:right">'+esc(t('stockAvail'))+'</th></tr></thead><tbody>'+s.p.o.map(function(x){return '<tr style="border-top:1px solid var(--line)"><td style="padding:4px 0">'+esc(x.c)+'</td><td>'+esc(x.s)+'</td><td class="mono" style="text-align:right">'+fmtN(num(x.st))+'</td><td class="mono" style="text-align:right">'+fmtN(num(x.av))+'</td></tr>'}).join('')+'</tbody></table>'}
+  var link='<p style="margin:10px 0 0;font-size:12px"><a href="'+SALES_BASE+'#sales" target="_blank" rel="noopener">'+esc(t('openDash'))+' →</a></p>';
+  return '<div class="blk">'+h3+tiles+chart+opt+link+'</div>';
+}
+
 function payList(vals){var l=['','상민','대표님','제3자송금(TT)'];(vals||[]).forEach(function(v){if(v&&l.indexOf(v)<0)l.push(v)});return l}
 function grpRows(k){return S.orders.filter(function(o){return groupKey(o)===k})}
 function gFld(f,rows,side){
@@ -372,7 +457,7 @@ function openGroup(k){
    '<div class="blk'+krLock+'"><h3>'+esc(t('blkKR'))+' <span>KR</span></h3><div class="grid2">'+KRF.map(function(f){return gFld(f,rows,'kr')}).join('')+'</div></div>'+
    '<div class="blk'+cnLock+'"><h3>'+esc(t('blkCN'))+' <span>CN</span></h3><div class="grid2">'+CNF.map(function(f){return gFld(f,rows,'cn')}).join('')+'</div></div>'+
    '<datalist id="dl_purchasers"><option value="대표님"><option value="상민"></datalist>'+
-   '<div class="blk"><h3>'+esc(t('grpOpts'))+'</h3><div class="table">'+rows.map(rowHTML).join('')+'</div></div>'+
+   salesBlock(rows)+'<div class="blk"><h3>'+esc(t('grpOpts'))+'</h3><div class="table">'+rows.map(rowHTML).join('')+'</div></div>'+
    '</div></aside>';
   var c=$('dClose');if(c)c.focus();
 }
@@ -498,7 +583,7 @@ function groupHTML(g){
   var pr=rows.filter(function(o){return S.thumbs[o.id]})[0];
   var th=pr?'<span class="th"><img alt="" src="'+S.thumbs[pr.id]+'"></span>':'<span class="th"></span>';
   var meta=[styles.join(' / '),mgr,t('colorsN').replace('{n}',Object.keys(colors).length)].filter(Boolean).join(' · ');
-  return '<div class="table"><div class="ghd"><button type="button" class="gbtn" data-grp="'+esc(g.k)+'">'+th+'<span class="gtx"><b>'+(S.brand==='all'?'<span class="btag '+brandOf(rows[0])+'">'+esc(t('b_'+brandOf(rows[0])))+'</span>':'')+esc(g.name)+missingTag(rows[0])+'</b><small>'+esc(meta)+'</small></span></button>'+
+  return '<div class="table"><div class="ghd"><button type="button" class="gbtn" data-grp="'+esc(g.k)+'">'+th+'<span class="gtx"><b>'+(S.brand==='all'?'<span class="btag '+brandOf(rows[0])+'">'+esc(t('b_'+brandOf(rows[0])))+'</span>':'')+esc(g.name)+missingTag(rows[0])+'</b><small>'+esc(meta)+'</small></span></button>'+salesMini(rows)+
     '<div class="gq">'+esc(t('totalLbl'))+' '+fmtN(total)+'<small>'+esc(t('unit'))+'</small></div>'+
     '<button type="button" class="btn" data-add="'+esc(g.name)+'" data-brand="'+brandOf(rows[0])+'" data-style="'+esc(styles[0]||'')+'">'+esc(t('addColor'))+'</button></div>'+
     rows.map(rowHTML).join('')+'</div>';
@@ -685,7 +770,7 @@ function poll(){
   return rpc('get_board',{p:pass}).then(function(b){
     clearTimeout(slow);S.loaded=true;S.conn='live';
     if(pending===0&&applyBoard(b||{}))renderAll();else renderStatic();
-    if(pending===0)loadThumbs();
+    if(pending===0)loadThumbs();loadSales();
   },function(e){clearTimeout(slow);if(e.bad){logout(true);return}S.conn='off';renderStatic()});
 }
 function startPolling(){clearInterval(pollTimer);pollTimer=setInterval(function(){if(!document.hidden)poll()},8000)}
@@ -736,7 +821,7 @@ function newId(){return 'o'+Date.now().toString(36)+Math.random().toString(36).s
 function tryLogin(p,n,silent){
   return rpc('get_board',{p:p}).then(function(b){
     pass=p;uname=n;S.authed=true;S.loaded=true;S.conn='live';lsSet('lvPass',p);lsSet('lvName',n);
-    applyBoard(b||{});renderAll();loadThumbs();startPolling();restoreMaster();return true;
+    applyBoard(b||{});renderAll();loadThumbs();startPolling();restoreMaster();loadSales();return true;
   },function(e){
     if(!silent){var el=$('lgErr');el.hidden=false;el.textContent=e.bad?t('lgBad'):t('lgNet')}
     return false;
