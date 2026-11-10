@@ -154,7 +154,7 @@ label.btn{cursor:pointer;display:inline-block}
 .drawer .row .c-prod{grid-area:prod}.drawer .row .c-status{grid-area:status;justify-self:end}.drawer .row .c-qty{grid-area:qty}.drawer .row .c-eta{grid-area:eta;justify-self:end;text-align:right}.drawer .row .c-note{grid-area:note}.drawer .row .c-msg,.drawer .row .c-round{display:none}
 .gq{font-family:var(--font-mono);font-size:16px;white-space:nowrap}
 .gq small{display:inline;margin-left:3px;font-family:var(--font-body)}
-.c-round{font-size:12px;color:var(--fg2)}.c-round small{display:block;font-size:11px}
+.c-round{font-size:12px;color:var(--fg2)}.c-round small{display:block;font-size:11px}.stkn{color:var(--accent)!important}
 
 /* drawer */
 .scrim{position:fixed;inset:0;background:rgba(10,8,20,.45);z-index:40}
@@ -310,7 +310,7 @@ var I18N={
   f_factory:'생산처',f_shipDate:'출고일',f_eta:'도착 예정일',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'운송장번호',f_labelSwap:'라벨 교체(갈이)',ls_yes:'가능',ls_no:'불가',ls_unk:'미확인',grpMixed:'여러 값',grpHint:'아래 칸을 바꾸면 이 상품의 모든 옵션에 한꺼번에 적용돼요.',grpOpts:'옵션별 보기',salesTitle:'판매 추이',salesSince:'10월~ 누적 판매',sales7:'최근 7일',salesAvg:'일평균(7일)',stockAvail:'가용 재고',stockQty:'재고',cover:'재고 소진 예상',daysUnit:'일',sColor:'컬러',sSize:'사이즈',noSales:'매칭되는 판매 데이터가 없어요. (상품명이 판매 대시보드와 다를 수 있어요)',salesLoading:'판매 데이터를 불러오는 중…',salesFail:'판매 데이터를 불러오지 못했어요.',openDash:'판매 대시보드 열기',f_noteZh:'중국 메모',
   blkKR:'한국 입력',blkCN:'중국 입력',ro:'읽기 전용',status:'진행 상태',
   msgs:'메시지',msgPh:'이 주문에 대해 남길 말 (Enter 전송, Shift+Enter 줄바꿈)',send:'보내기',noMsgs:'아직 메시지가 없어요.',
-  saved:'저장했어요',selMode:'선택',selDone:'선택 종료',selN:'{n}건 선택',selApply:'상태 변경',selAll:'전체 선택',selNone:'선택 해제',selConfirm:'{n}건의 상태를 "{s}"(으)로 바꿀까요?',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
+  saved:'저장했어요',stkNow:'현재고',selMode:'선택',selDone:'선택 종료',selN:'{n}건 선택',selApply:'상태 변경',selAll:'전체 선택',selNone:'선택 해제',selConfirm:'{n}건의 상태를 "{s}"(으)로 바꿀까요?',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
   empty:'등록된 주문이 없어요',emptyHint:'오른쪽 위 "주문 추가"로 첫 주문을 등록하세요.',emptyFilter:'조건에 맞는 주문이 없어요',
   conn_wait:'연결 중…',conn_live:'실시간 공유 중',conn_slow:'연결이 느려요. 표시된 내용이 최신이 아닐 수 있어요',conn_off:'데이터에 연결할 수 없어요',
   readonlyBanner:'보기 전용 권한이에요. 입력하려면 편집 권한(기여자 이상)이 필요해요.',offlineBanner:'서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.',
@@ -334,7 +334,7 @@ var I18N={
   f_factory:'工厂',f_shipDate:'发货日期',f_eta:'预计到货日',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号',f_labelSwap:'可换标签',ls_yes:'可以',ls_no:'不可以',ls_unk:'未确认',grpMixed:'多个值',grpHint:'修改下方内容将一次性应用到该商品的所有选项。',grpOpts:'按选项查看',salesTitle:'销售趋势',salesSince:'10月起累计销量',sales7:'近7天',salesAvg:'日均(7天)',stockAvail:'可用库存',stockQty:'库存',cover:'预计可售天数',daysUnit:'天',sColor:'颜色',sSize:'尺码',noSales:'没有匹配的销售数据。',salesLoading:'正在加载销售数据…',salesFail:'无法加载销售数据。',openDash:'打开销售看板',f_noteZh:'中方备注',
   blkKR:'韩方填写',blkCN:'中方填写',ro:'只读',status:'当前进度',
   msgs:'留言',msgPh:'针对此订单留言（Enter 发送，Shift+Enter 换行）',send:'发送',noMsgs:'还没有留言。',
-  saved:'已保存',selMode:'选择',selDone:'结束选择',selN:'已选{n}项',selApply:'修改状态',selAll:'全选',selNone:'取消选择',selConfirm:'将{n}项的状态改为“{s}”？',saveFail:'保存失败，请检查权限或网络。',
+  saved:'已保存',stkNow:'当前库存',selMode:'选择',selDone:'结束选择',selN:'已选{n}项',selApply:'修改状态',selAll:'全选',selNone:'取消选择',selConfirm:'将{n}项的状态改为“{s}”？',saveFail:'保存失败，请检查权限或网络。',
   empty:'还没有订单',emptyHint:'点击右上角“新增订单”登记第一笔。',emptyFilter:'没有符合条件的订单',
   conn_wait:'连接中…',conn_live:'实时共享中',conn_slow:'连接较慢，显示内容可能不是最新',conn_off:'无法连接数据',
   readonlyBanner:'当前为只读权限。需要编辑权限（贡献者及以上）才能填写。',offlineBanner:'无法连接服务器，请检查网络连接。',
@@ -581,10 +581,23 @@ function renderBrand(){
   $('brandbar').innerHTML=['all','lovlov','lessetter'].map(function(b){return '<button type="button" data-b="'+b+'" aria-pressed="'+(S.brand===b)+'">'+esc(b==='all'?t('brandAll'):t('b_'+b))+'<b>'+c[b]+'</b></button>'}).join('');
 }
 function odShort(o){var m=String(o.orderDate||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);return m?(+m[2])+'/'+(+m[3]):''}
+function stkNs(z){var u=String(z==null?'':z).toUpperCase().replace(/\s/g,'');return /^(F|FREE|FR|FREESIZE|프리|프리사이즈|ONE|ONESIZE|OS)$/.test(u)?'F':u}
+var COLAL={'그레이':'GRAY','회색':'GRAY','블랙':'BLACK','검정':'BLACK','화이트':'WHITE','아이보리':'IVORY','크림':'CREAM','베이지':'BEIGE','카키':'KHAKI','브라운':'BROWN','네이비':'NAVY','차콜':'CHARCOAL','오트밀':'OATMEAL','핑크':'PINK','블루':'BLUE','레드':'RED','그린':'GREEN','다크':'DARK','라이트':'LIGHT','멜란지':'MELANGE'};
+function stkCol(c){var u=normK(c).replace(/GREY/g,'GRAY');Object.keys(COLAL).forEach(function(k){u=u.split(k).join(COLAL[k])});return u}
+function stkOf(o){
+  if(!SALES.ready)return null;
+  var ks=[normK(o.nameKo),normK(o.name)],k=null;
+  for(var i=0;i<ks.length&&!k;i++){var x=ks[i];if(!x)continue;if(SALES.stk[x])k=x;else if(SALES.byEn[x]&&SALES.stk[SALES.byEn[x]])k=SALES.byEn[x]}
+  var p=k&&SALES.stk[k].p;if(!p||!p.o||!p.o.length)return null;
+  var nc=stkCol(o.color),nz=stkNs(o.size),st=0,av=0,hit=false;
+  p.o.forEach(function(x){if(stkCol(x.c)===nc&&(!nz||stkNs(x.s)===nz)){st+=num(x.st);av+=num(x.av);hit=true}});
+  return hit?{st:st,av:av}:null;
+}
+function stkHTML(o){var z=stkOf(o);return z?'<small class="stkn" title="'+esc(t('stockAvail'))+' '+fmtN(z.av)+'">'+esc(t('stkNow'))+' '+fmtN(z.st)+'</small>':''}
 function rowHTML(o){
   var mc=msgCount(o.id),od=odShort(o),sub=[sizeOf(o),o.round?o.round+t('roundSuffix'):'',od].filter(Boolean).join(' · ');
   return '<button type="button" class="row grow'+(S.selMode&&S.sel[o.id]?' sel':'')+'" data-id="'+esc(o.id)+'"><span class="c-prod">'+(S.selMode?'<span class="chk'+(S.sel[o.id]?' on':'')+'"></span>':'')+'<span class="tx"><b>'+esc(colorOf(o)||'—')+'</b><small>'+esc(sub)+'</small></span></span>'+
-    '<span class="c-round">'+esc(o.round?o.round+t('roundSuffix'):'')+(od?'<small>'+esc(od)+'</small>':'')+'</span><span class="c-qty">'+qtyHTML(o)+'</span>'+
+    '<span class="c-round">'+esc(o.round?o.round+t('roundSuffix'):'')+(od?'<small>'+esc(od)+'</small>':'')+'</span><span class="c-qty">'+qtyHTML(o)+stkHTML(o)+'</span>'+
     '<span class="c-status">'+pill(STATUS.indexOf(o.status)>=0?o.status:'draft')+'</span><span class="c-eta">'+etaHTML(o)+'</span>'+
     '<span class="c-note">'+noteHTML(o)+'</span><span class="c-msg">'+(mc?'<span class="badge">'+mc+'</span>':'')+'</span></button>';
 }
