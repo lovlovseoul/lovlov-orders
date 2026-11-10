@@ -193,6 +193,15 @@ dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface)
 dialog::backdrop{background:rgba(10,8,20,.45)}
 dialog h2{margin:0 0 12px;font-size:16px}
 dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.chk{display:inline-block;flex:0 0 18px;width:18px;height:18px;border:2px solid var(--fg2);border-radius:4px;margin-right:8px;vertical-align:middle;position:relative}
+.chk.on{background:var(--fg);border-color:var(--fg)}
+.chk.on:after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.row.sel{background:var(--surface2)}
+.c-prod{display:flex;align-items:center}
+.gchk{background:none;border:0;padding:4px;cursor:pointer;display:flex;align-items:center}
+.gchk .chk{margin:0}
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:70;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100vw - 24px)}
+.selbar[hidden]{display:none}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:60;padding:8px 14px;border-radius:8px;background:var(--fg);color:var(--bg);font-size:13px}
 
 @media (max-width:860px){
@@ -248,6 +257,7 @@ dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
       <button type="button" role="tab" id="tabBuy" aria-selected="false"></button>
     </div>
     <input class="search" id="q" type="search" autocomplete="off">
+    <button type="button" class="btn" id="selBtn"></button>
     <button type="button" class="btn primary" id="addBtn"></button>
   </div>
 
@@ -275,6 +285,7 @@ dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
     </div>
   </form>
 </dialog>
+<div class="selbar" id="selBar" hidden><span id="selCnt"></span><select id="selStat"></select><button type="button" class="btn primary" id="selApply"></button><button type="button" class="btn" id="selAll"></button><button type="button" class="btn" id="selCancel"></button></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -299,7 +310,7 @@ var I18N={
   f_factory:'생산처',f_shipDate:'출고일',f_eta:'도착 예정일',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'운송장번호',f_labelSwap:'라벨 교체(갈이)',ls_yes:'가능',ls_no:'불가',ls_unk:'미확인',grpMixed:'여러 값',grpHint:'아래 칸을 바꾸면 이 상품의 모든 옵션에 한꺼번에 적용돼요.',grpOpts:'옵션별 보기',salesTitle:'판매 추이',salesSince:'10월~ 누적 판매',sales7:'최근 7일',salesAvg:'일평균(7일)',stockAvail:'가용 재고',stockQty:'재고',cover:'재고 소진 예상',daysUnit:'일',sColor:'컬러',sSize:'사이즈',noSales:'매칭되는 판매 데이터가 없어요. (상품명이 판매 대시보드와 다를 수 있어요)',salesLoading:'판매 데이터를 불러오는 중…',salesFail:'판매 데이터를 불러오지 못했어요.',openDash:'판매 대시보드 열기',f_noteZh:'중국 메모',
   blkKR:'한국 입력',blkCN:'중국 입력',ro:'읽기 전용',status:'진행 상태',
   msgs:'메시지',msgPh:'이 주문에 대해 남길 말 (Enter 전송, Shift+Enter 줄바꿈)',send:'보내기',noMsgs:'아직 메시지가 없어요.',
-  saved:'저장했어요',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
+  saved:'저장했어요',selMode:'선택',selDone:'선택 종료',selN:'{n}건 선택',selApply:'상태 변경',selAll:'전체 선택',selNone:'선택 해제',selConfirm:'{n}건의 상태를 "{s}"(으)로 바꿀까요?',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
   empty:'등록된 주문이 없어요',emptyHint:'오른쪽 위 "주문 추가"로 첫 주문을 등록하세요.',emptyFilter:'조건에 맞는 주문이 없어요',
   conn_wait:'연결 중…',conn_live:'실시간 공유 중',conn_slow:'연결이 느려요. 표시된 내용이 최신이 아닐 수 있어요',conn_off:'데이터에 연결할 수 없어요',
   readonlyBanner:'보기 전용 권한이에요. 입력하려면 편집 권한(기여자 이상)이 필요해요.',offlineBanner:'서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.',
@@ -323,7 +334,7 @@ var I18N={
   f_factory:'工厂',f_shipDate:'发货日期',f_eta:'预计到货日',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号',f_labelSwap:'可换标签',ls_yes:'可以',ls_no:'不可以',ls_unk:'未确认',grpMixed:'多个值',grpHint:'修改下方内容将一次性应用到该商品的所有选项。',grpOpts:'按选项查看',salesTitle:'销售趋势',salesSince:'10月起累计销量',sales7:'近7天',salesAvg:'日均(7天)',stockAvail:'可用库存',stockQty:'库存',cover:'预计可售天数',daysUnit:'天',sColor:'颜色',sSize:'尺码',noSales:'没有匹配的销售数据。',salesLoading:'正在加载销售数据…',salesFail:'无法加载销售数据。',openDash:'打开销售看板',f_noteZh:'中方备注',
   blkKR:'韩方填写',blkCN:'中方填写',ro:'只读',status:'当前进度',
   msgs:'留言',msgPh:'针对此订单留言（Enter 发送，Shift+Enter 换行）',send:'发送',noMsgs:'还没有留言。',
-  saved:'已保存',saveFail:'保存失败，请检查权限或网络。',
+  saved:'已保存',selMode:'选择',selDone:'结束选择',selN:'已选{n}项',selApply:'修改状态',selAll:'全选',selNone:'取消选择',selConfirm:'将{n}项的状态改为“{s}”？',saveFail:'保存失败，请检查权限或网络。',
   empty:'还没有订单',emptyHint:'点击右上角“新增订单”登记第一笔。',emptyFilter:'没有符合条件的订单',
   conn_wait:'连接中…',conn_live:'实时共享中',conn_slow:'连接较慢，显示内容可能不是最新',conn_off:'无法连接数据',
   readonlyBanner:'当前为只读权限。需要编辑权限（贡献者及以上）才能填写。',offlineBanner:'无法连接服务器，请检查网络连接。',
@@ -340,7 +351,7 @@ var SIZE_ZH={'free':'均码','one size':'均码','onesize':'均码'};
 var KR_FIELDS=[['color','text'],['size','text'],['qty','number'],['round','text'],['orderDate','date'],['style','text'],['manager','text'],['purchaser','text','purchasers'],['payment','pay'],['receivedQty','number'],['defectQty','number'],['noteKo','area']];
 var CN_FIELDS=[['factory','text'],['labelSwap','lswap'],['shipDate','date'],['eta','date'],['etaConf','conf'],['shippedQty','number'],['tracking','text'],['noteZh','area']];
 
-var S={buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
+var S={sel:{},selMode:false,buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
 var $=function(id){return document.getElementById(id)};
 function sd(){return S.role==='master'?'kr':S.role}
@@ -571,7 +582,7 @@ function renderBrand(){
 }
 function rowHTML(o){
   var mc=msgCount(o.id),sub=[sizeOf(o),o.round?o.round+t('roundSuffix'):''].filter(Boolean).join(' · ');
-  return '<button type="button" class="row grow" data-id="'+esc(o.id)+'"><span class="c-prod"><span class="tx"><b>'+esc(colorOf(o)||'—')+'</b><small>'+esc(sub)+'</small></span></span>'+
+  return '<button type="button" class="row grow'+(S.selMode&&S.sel[o.id]?' sel':'')+'" data-id="'+esc(o.id)+'"><span class="c-prod">'+(S.selMode?'<span class="chk'+(S.sel[o.id]?' on':'')+'"></span>':'')+'<span class="tx"><b>'+esc(colorOf(o)||'—')+'</b><small>'+esc(sub)+'</small></span></span>'+
     '<span class="c-round">'+esc(o.round?o.round+t('roundSuffix'):'')+'</span><span class="c-qty">'+qtyHTML(o)+'</span>'+
     '<span class="c-status">'+pill(STATUS.indexOf(o.status)>=0?o.status:'draft')+'</span><span class="c-eta">'+etaHTML(o)+'</span>'+
     '<span class="c-note">'+noteHTML(o)+'</span><span class="c-msg">'+(mc?'<span class="badge">'+mc+'</span>':'')+'</span></button>';
@@ -583,7 +594,7 @@ function groupHTML(g){
   var pr=rows.filter(function(o){return S.thumbs[o.id]})[0];
   var th=pr?'<span class="th"><img alt="" src="'+S.thumbs[pr.id]+'"></span>':'<span class="th"></span>';
   var meta=[styles.join(' / '),mgr,t('colorsN').replace('{n}',Object.keys(colors).length)].filter(Boolean).join(' · ');
-  return '<div class="table"><div class="ghd"><button type="button" class="gbtn" data-grp="'+esc(g.k)+'">'+th+'<span class="gtx"><b>'+(S.brand==='all'?'<span class="btag '+brandOf(rows[0])+'">'+esc(t('b_'+brandOf(rows[0])))+'</span>':'')+esc(g.name)+missingTag(rows[0])+'</b><small>'+esc(meta)+'</small></span></button>'+salesMini(rows)+
+  return '<div class="table"><div class="ghd">'+(S.selMode?'<button type="button" class="gchk" data-gsel="'+esc(g.k)+'"><span class="chk'+(rows.every(function(o){return S.sel[o.id]})?' on':'')+'"></span></button>':'')+'<button type="button" class="gbtn" data-grp="'+esc(g.k)+'">'+th+'<span class="gtx"><b>'+(S.brand==='all'?'<span class="btag '+brandOf(rows[0])+'">'+esc(t('b_'+brandOf(rows[0])))+'</span>':'')+esc(g.name)+missingTag(rows[0])+'</b><small>'+esc(meta)+'</small></span></button>'+salesMini(rows)+
     '<div class="gq">'+esc(t('totalLbl'))+' '+fmtN(total)+'<small>'+esc(t('unit'))+'</small></div>'+
     '<button type="button" class="btn" data-add="'+esc(g.name)+'" data-brand="'+brandOf(rows[0])+'" data-style="'+esc(styles[0]||'')+'">'+esc(t('addColor'))+'</button></div>'+
     rows.map(rowHTML).join('')+'</div>';
@@ -599,7 +610,26 @@ function renderList(){
     order.sort(function(a,b){return a.eta<b.eta?-1:a.eta>b.eta?1:(a.name<b.name?-1:1)});
     h='<div class="head ghead"><span>'+esc(t('hColor'))+'</span><span>'+esc(t('hRound'))+'</span><span>'+esc(t('hOq'))+'</span><span>'+esc(t('hStatus'))+'</span><span>'+esc(t('hEta'))+'</span><span>'+esc(t('hNote'))+'</span><span></span></div><div class="glist">'+order.map(groupHTML).join('')+'</div>';
   }
-  $('viewList').innerHTML=h;
+  $('viewList').innerHTML=h;renderSelBar();
+}
+function canBulk(){return S.authed&&S.canWrite&&S.role!=='cn'}
+function selIds(){return Object.keys(S.sel).filter(function(k){return S.sel[k]&&byId(k)})}
+function renderSelBar(){
+  var b=$('selBar');if(!b)return;
+  $('selBtn').textContent=S.selMode?t('selDone'):t('selMode');$('selBtn').hidden=!canBulk();
+  if(!S.selMode||!canBulk()||S.tab!=='list'){b.hidden=true;return}
+  var n=selIds().length;b.hidden=false;
+  $('selCnt').textContent=t('selN').replace('{n}',n);
+  var cur=$('selStat').value;$('selStat').innerHTML=STATUS.map(function(s){return '<option value="'+s+'">'+esc(t('st_'+s))+'</option>'}).join('');if(cur)$('selStat').value=cur;
+  $('selApply').textContent=t('selApply');$('selApply').disabled=!n;$('selAll').textContent=t('selAll');$('selCancel').textContent=t('selNone');
+}
+function selClear(){S.sel={}}
+function selApplyNow(){
+  var ids=selIds(),st=$('selStat').value;if(!ids.length)return;
+  if(!window.confirm(t('selConfirm').replace('{n}',ids.length).replace('{s}',t('st_'+st))))return;
+  var ts=Date.now();
+  ids.forEach(function(id){var o=byId(id);if(o&&o.status!==st){save(id,{status:st})}});
+  selClear();S.selMode=false;renderAll();
 }
 function qOk(o){if(!S.q)return true;var hay=[o.name,o.nameKo,o.nameZh,o.color,o.size,o.style,o.noteKo,o.noteZh,o.purchaser,o.payment].join(' ').toLowerCase();return hay.indexOf(S.q.toLowerCase())>=0}
 function renderBuy(){
@@ -653,7 +683,7 @@ function renderStatic(){
   document.title=t('ttl');
   $('ttl').textContent=t('ttl');$('sub').textContent=t('sub')+' · '+t('roleHint');
   $('tabList').textContent=t('tabList');$('tabArr').textContent=t('tabArr');$('tabBuy').textContent=t('tabBuy');
-  $('q').placeholder=t('search');$('addBtn').textContent=t('add');
+  $('q').placeholder=t('search');$('addBtn').textContent=t('add');renderSelBar();
   $('roleKR').setAttribute('aria-pressed',S.role==='kr');$('roleCN').setAttribute('aria-pressed',S.role==='cn');$('roleMS').setAttribute('aria-pressed',S.role==='master');
   $('langKO').setAttribute('aria-pressed',S.lang==='ko');$('langZH').setAttribute('aria-pressed',S.lang==='zh');
   $('tabList').setAttribute('aria-selected',S.tab==='list');$('tabArr').setAttribute('aria-selected',S.tab==='arr');$('tabBuy').setAttribute('aria-selected',S.tab==='buy');
@@ -839,8 +869,9 @@ document.addEventListener('click',function(e){
   if(el.dataset&&el.dataset.bm){S.buyMode=el.dataset.bm;renderBuy();return}
   if(el.dataset&&el.dataset.b){S.brand=el.dataset.b;lsSet('lvBrand',S.brand);renderAll();return}
   if(el.dataset&&el.dataset.f){S.filter=el.dataset.f;if(S.tab!=='list'){S.tab='list';location.hash='list'}renderAll();return}
+  if(el.dataset&&el.dataset.gsel){var gr=grpRows(el.dataset.gsel).filter(matches),all=gr.every(function(o){return S.sel[o.id]});gr.forEach(function(o){S.sel[o.id]=!all});renderList();return}
   if(el.dataset&&el.dataset.grp){openGroup(el.dataset.grp);return}
-  if(el.classList.contains('row')){openDrawer(el.dataset.id);return}
+  if(el.classList.contains('row')){if(S.selMode){S.sel[el.dataset.id]=!S.sel[el.dataset.id];renderList();return}openDrawer(el.dataset.id);return}
   switch(el.id){
     case 'roleKR':S.role='kr';lsSet('lvRole','kr');if(!lsGet('lvLangSet')){S.lang='ko'}renderAll();if(S.openId)reopen();break;
     case 'roleMS':askMaster(false);break;
@@ -850,6 +881,10 @@ document.addEventListener('click',function(e){
     case 'tabList':S.tab='list';location.hash='list';renderAll();break;
     case 'tabArr':S.tab='arr';location.hash='arrivals';renderAll();break;
     case 'tabBuy':S.tab='buy';location.hash='buy';renderAll();break;
+    case 'selBtn':S.selMode=!S.selMode;if(!S.selMode)selClear();renderList();break;
+    case 'selApply':selApplyNow();break;
+    case 'selAll':S.orders.filter(matches).forEach(function(o){S.sel[o.id]=true});renderList();break;
+    case 'selCancel':selClear();renderList();break;
     case 'addBtn':S.addStyle='';$('ndForm').reset();$('ndBrand').value=S.brand==='lessetter'?'lessetter':'lovlov';$('ndStat').value='draft';$('newDlg').showModal();$('ndName').focus();break;
     case 'ndCancel':$('newDlg').close();break;
     case 'scrim':case 'dClose':closeDrawer();break;
