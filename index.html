@@ -193,6 +193,7 @@ dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface)
 dialog::backdrop{background:rgba(10,8,20,.45)}
 dialog h2{margin:0 0 12px;font-size:16px}
 #helpDlg{width:min(720px,calc(100vw - 32px));max-height:86vh;overflow:hidden;flex-direction:column}#helpDlg[open]{display:flex}.helpbody{overflow:auto;flex:1;padding-right:6px;font-size:14px;line-height:1.6}.helpbody h3{margin:16px 0 4px;font-size:14px}.helpbody h3:first-child{margin-top:0}.helpbody ul{margin:0;padding-left:20px}.helpbody li{margin:3px 0}
+.shrow{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.7fr) minmax(0,1fr) 28px;gap:6px;margin-bottom:6px}.shrow input{min-width:0}.shrow .x{align-self:center}
 dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
 .chk{display:inline-block;flex:0 0 18px;width:18px;height:18px;border:2px solid var(--fg2);border-radius:4px;margin-right:8px;vertical-align:middle;position:relative}
 .chk.on{background:var(--fg);border-color:var(--fg)}
@@ -314,7 +315,7 @@ var I18N={
   f_factory:'생산처',f_shipDate:'중국 공장 출고일',shipDt:'공장출고',f_eta:'한국 입고 예정일',f_cnWh:'중국 창고 도착일',cnWhShort:'중국창고',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'운송장번호',f_labelSwap:'라벨 교체(갈이)',ls_yes:'가능',ls_no:'불가',ls_unk:'미확인',grpMixed:'여러 값',grpHint:'아래 칸을 바꾸면 이 상품의 모든 옵션에 한꺼번에 적용돼요.',grpOpts:'옵션별 보기',salesTitle:'판매 추이',salesSince:'10월~ 누적 판매',sales7:'최근 7일',salesAvg:'일평균(7일)',stockAvail:'가용 재고',stockQty:'재고',cover:'재고 소진 예상',daysUnit:'일',sColor:'컬러',sSize:'사이즈',noSales:'매칭되는 판매 데이터가 없어요. (상품명이 판매 대시보드와 다를 수 있어요)',salesLoading:'판매 데이터를 불러오는 중…',salesFail:'판매 데이터를 불러오지 못했어요.',openDash:'판매 대시보드 열기',f_noteZh:'중국 메모',
   blkKR:'한국 입력',blkCN:'중국 입력',ro:'읽기 전용',status:'진행 상태',
   msgs:'메시지',msgPh:'이 주문에 대해 남길 말 (Enter 전송, Shift+Enter 줄바꿈)',send:'보내기',noMsgs:'아직 메시지가 없어요.',
-  saved:'저장했어요',selEdit:'일괄 수정',selDel:'삭제',selDelConfirm:'선택한 {n}건을 삭제할까요? 되돌릴 수 없어요.',bkTitle:'일괄 수정 ({n}건)',bkHint:'바꿀 칸만 입력하세요. 비워 두거나 "변경 안 함"인 칸은 그대로 유지돼요.',bkKeep:'변경 안 함',bkApply:'적용',bkConfirm:'선택한 {n}건에 적용할까요?',helpBtn:'사용방법',helpTitle:'사용방법',helpClose:'닫기',stkNow:'현재고',selMode:'선택',selDone:'선택 종료',selN:'{n}건 선택',selApply:'상태 변경',selAll:'전체 선택',selNone:'선택 해제',selConfirm:'{n}건의 상태를 "{s}"(으)로 바꿀까요?',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
+  saved:'저장했어요',shipNo:'운송장번호',shipQty:'수량',shipAdd:'+ 운송장 추가',shipSum:'발송 합계 {a} / 주문 {b}',shipHint:'나눠서 발송하면 운송장을 여러 개 추가하고 수량을 적어 주세요.',selEdit:'일괄 수정',selDel:'삭제',selDelConfirm:'선택한 {n}건을 삭제할까요? 되돌릴 수 없어요.',bkTitle:'일괄 수정 ({n}건)',bkHint:'바꿀 칸만 입력하세요. 비워 두거나 "변경 안 함"인 칸은 그대로 유지돼요.',bkKeep:'변경 안 함',bkApply:'적용',bkConfirm:'선택한 {n}건에 적용할까요?',helpBtn:'사용방법',helpTitle:'사용방법',helpClose:'닫기',stkNow:'현재고',selMode:'선택',selDone:'선택 종료',selN:'{n}건 선택',selApply:'상태 변경',selAll:'전체 선택',selNone:'선택 해제',selConfirm:'{n}건의 상태를 "{s}"(으)로 바꿀까요?',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
   empty:'등록된 주문이 없어요',emptyHint:'오른쪽 위 "주문 추가"로 첫 주문을 등록하세요.',emptyFilter:'조건에 맞는 주문이 없어요',
   conn_wait:'연결 중…',conn_live:'실시간 공유 중',conn_slow:'연결이 느려요. 표시된 내용이 최신이 아닐 수 있어요',conn_off:'데이터에 연결할 수 없어요',
   readonlyBanner:'보기 전용 권한이에요. 입력하려면 편집 권한(기여자 이상)이 필요해요.',offlineBanner:'서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.',
@@ -338,7 +339,7 @@ var I18N={
   f_factory:'工厂',f_shipDate:'中国工厂发货日',shipDt:'工厂发货',f_eta:'预计韩国入库日',f_cnWh:'中国仓库到货日',cnWhShort:'中国仓库',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号',f_labelSwap:'可换标签',ls_yes:'可以',ls_no:'不可以',ls_unk:'未确认',grpMixed:'多个值',grpHint:'修改下方内容将一次性应用到该商品的所有选项。',grpOpts:'按选项查看',salesTitle:'销售趋势',salesSince:'10月起累计销量',sales7:'近7天',salesAvg:'日均(7天)',stockAvail:'可用库存',stockQty:'库存',cover:'预计可售天数',daysUnit:'天',sColor:'颜色',sSize:'尺码',noSales:'没有匹配的销售数据。',salesLoading:'正在加载销售数据…',salesFail:'无法加载销售数据。',openDash:'打开销售看板',f_noteZh:'中方备注',
   blkKR:'韩方填写',blkCN:'中方填写',ro:'只读',status:'当前进度',
   msgs:'留言',msgPh:'针对此订单留言（Enter 发送，Shift+Enter 换行）',send:'发送',noMsgs:'还没有留言。',
-  saved:'已保存',selEdit:'批量修改',selDel:'删除',selDelConfirm:'确定删除所选的{n}项吗？删除后无法恢复。',bkTitle:'批量修改（{n}项）',bkHint:'只填写需要修改的栏位。留空或选择“不修改”的栏位保持不变。',bkKeep:'不修改',bkApply:'应用',bkConfirm:'确定应用到所选的{n}项吗？',helpBtn:'使用说明',helpTitle:'使用说明',helpClose:'关闭',stkNow:'当前库存',selMode:'选择',selDone:'结束选择',selN:'已选{n}项',selApply:'修改状态',selAll:'全选',selNone:'取消选择',selConfirm:'将{n}项的状态改为“{s}”？',saveFail:'保存失败，请检查权限或网络。',
+  saved:'已保存',shipNo:'运单号',shipQty:'数量',shipAdd:'+ 添加运单',shipSum:'已发货合计 {a} / 订单 {b}',shipHint:'分批发货时，请添加多个运单号并填写数量。',selEdit:'批量修改',selDel:'删除',selDelConfirm:'确定删除所选的{n}项吗？删除后无法恢复。',bkTitle:'批量修改（{n}项）',bkHint:'只填写需要修改的栏位。留空或选择“不修改”的栏位保持不变。',bkKeep:'不修改',bkApply:'应用',bkConfirm:'确定应用到所选的{n}项吗？',helpBtn:'使用说明',helpTitle:'使用说明',helpClose:'关闭',stkNow:'当前库存',selMode:'选择',selDone:'结束选择',selN:'已选{n}项',selApply:'修改状态',selAll:'全选',selNone:'取消选择',selConfirm:'将{n}项的状态改为“{s}”？',saveFail:'保存失败，请检查权限或网络。',
   empty:'还没有订单',emptyHint:'点击右上角“新增订单”登记第一笔。',emptyFilter:'没有符合条件的订单',
   conn_wait:'连接中…',conn_live:'实时共享中',conn_slow:'连接较慢，显示内容可能不是最新',conn_off:'无法连接数据',
   readonlyBanner:'当前为只读权限。需要编辑权限（贡献者及以上）才能填写。',offlineBanner:'无法连接服务器，请检查网络连接。',
@@ -355,7 +356,7 @@ var SIZE_ZH={'free':'均码','one size':'均码','onesize':'均码'};
 var KR_FIELDS=[['color','text'],['size','text'],['qty','number'],['round','text'],['orderDate','date'],['style','text'],['manager','text'],['purchaser','text','purchasers'],['payment','pay'],['receivedQty','number'],['defectQty','number'],['noteKo','area']];
 var CN_FIELDS=[['factory','text'],['labelSwap','lswap'],['cnWh','date'],['shipDate','date'],['eta','date'],['etaConf','conf'],['shippedQty','number'],['tracking','text'],['noteZh','area']];
 
-var HELP={ko:"<h3>1. 시작하기</h3><ul><li>주소로 접속해 이름과 공통 암호를 입력하면 들어갈 수 있어요. 암호는 외부에 공유하지 마세요.</li><li>오른쪽 위에서 언어(한국어 / 中文)와 역할을 고를 수 있어요. 한국 직원은 '한국 직원', 중국 담당자는 '中国负责人'을 선택하세요.</li><li>'마스터'는 마스터 암호를 입력하면 한국·중국 칸을 모두 수정할 수 있어요.</li></ul><h3>2. 화면 보는 법</h3><ul><li>맨 위 칩은 상태별 주문 건수와 수량이에요. 칩을 누르면 그 상태만 모아 볼 수 있어요.</li><li>탭은 '주문 목록' / '도착 일정' / '구매 내역'이 있고, 검색창에서 상품명·색상·메모 등으로 찾을 수 있어요.</li><li>브랜드(LOVLOV / LESSETTER) 버튼으로 브랜드별로 나눠 볼 수 있어요.</li><li>목록은 상품별로 묶여 있고, 각 줄은 색상·사이즈 옵션이에요. 차수 아래 작은 글씨는 주문 날짜, 수량 아래 파란 글씨는 현재고예요.</li></ul><h3>3. 상태 흐름</h3><ul><li>발주 전 → 발주 완료 → 생산 중 → 생산 완료 → 출고·운송 중 → 입고 완료 순서로 진행돼요. 멈춰 있는 건은 '보류'를 써요.</li><li>'발주 전'은 수량만 계획해 두고 아직 공장에 주문하지 않은 상태예요.</li></ul><h3>4. 한국 직원이 하는 일</h3><ul><li>옵션 줄을 누르면 오른쪽에 상세창이 열려요. 색상·사이즈·수량·차수·주문날짜·결제·구매자·상태·메모를 바꾸면 칸을 벗어날 때 자동 저장돼요.</li><li>상품 이름(제목)을 누르면 그 상품의 모든 옵션을 한 번에 수정하는 창이 열려요. 사진과 판매 추이·재고도 여기서 볼 수 있어요.</li><li>'색상 추가' 버튼은 같은 상품에 옵션을 더하고, 오른쪽 위 '+ 주문 추가'는 새 상품을 등록해요.</li><li>'선택' 버튼을 누르면 체크박스가 생겨요. 여러 줄(또는 상품 전체)을 체크하고 아래 바에서 상태를 고른 뒤 '상태 변경'을 누르면 한 번에 바뀌어요. 같은 바의 '일괄 수정'으로 운송장번호·출고일 같은 여러 칸을 한 번에 바꾸고, '삭제'로 한 번에 지울 수 있어요(삭제는 한국 직원·마스터만, 중국 담당자는 중국 담당 칸만 일괄 수정).</li></ul><h3>5. 중국 담당자가 하는 일</h3><ul><li>생산처, 라벨 교체(갈이) 가능 여부(가능 / 불가 / 미확인), 중국 창고 도착일, 중국 공장 출고일, 한국 입고 예정일(확정 / 예상), 운송장번호, 중국어 메모를 입력해요.</li><li>운송장번호를 처음 입력하면 상태가 자동으로 '출고·운송 중'으로 바뀌어요. 한국 쪽 상태 칸은 중국 담당자가 직접 바꿀 수 없어요.</li><li>궁금한 점은 상세창 아래 메시지 칸에 남기면 한국 직원이 볼 수 있어요. 사진도 올릴 수 있어요.</li></ul><h3>6. 자동으로 되는 것</h3><ul><li>입출고 시트에 입고 수량이 들어오면 해당 주문이 '입고 완료'로 자동 변경돼요(레세터 등 시트와 연결된 상품).</li><li>판매 대시보드와 연결되어 최근 7일 판매, 누적 판매, 현재고가 표시돼요. 상품명이 달라 매칭되지 않으면 표시되지 않을 수 있어요.</li><li>다른 사람이 수정한 내용은 몇 초 안에 자동으로 화면에 반영돼요.</li></ul><h3>7. 알아두세요</h3><ul><li>같은 칸을 동시에 고치면 마지막에 저장한 값이 적용돼요.</li><li>저장이 안 되면 화면 위에 연결 상태가 표시돼요. 연결을 확인한 뒤 다시 시도하세요.</li><li>문의나 오류는 담당자에게 알려 주세요.</li></ul>",zh:"<h3>1. 如何开始</h3><ul><li>打开网址，输入姓名和共用密码即可进入。请勿向外部泄露密码。</li><li>右上角可选择语言（한국어 / 中文）和身份。韩国员工选“한국 직원”，中国负责人选“中国负责人”。</li><li>“마스터”（管理员）需输入管理员密码，可修改韩方和中方的所有栏位。</li></ul><h3>2. 界面说明</h3><ul><li>最上方的标签显示各状态的订单数和数量，点击标签可只查看该状态。</li><li>有“订单列表 / 到货日程 / 采购记录”三个标签页，搜索框可按商品名、颜色、备注等查找。</li><li>可用品牌按钮（LOVLOV / LESSETTER）按品牌筛选。</li><li>列表按商品分组，每一行是颜色·尺码选项。批次下面的小字是下单日期，数量下面的蓝色小字是当前库存。</li></ul><h3>3. 状态流程</h3><ul><li>按“待下单 → 已下单 → 生产中 → 生产完成 → 已发货·运输中 → 已入库”顺序进行；暂时停止的订单使用“暂缓”。</li><li>“待下单”表示只是计划了数量，还没有向工厂下单。</li></ul><h3>4. 韩国员工的操作</h3><ul><li>点击选项行，右侧会打开详情窗口。修改颜色、尺码、数量、批次、下单日期、付款、采购人、状态、备注后，离开该栏位即自动保存。</li><li>点击商品名称（标题），会打开该商品所有选项的批量修改窗口，也可以查看照片、销售趋势和库存。</li><li>“색상 추가”按钮用于给同一商品增加选项，右上角“+ 주문 추가”用于登记新商品。</li><li>点击“선택”按钮会出现复选框。勾选多行（或整个商品），在下方栏选择状态后点击“상태 변경”，即可一次性修改。同一栏的“批量修改”可一次修改运单号、发货日期等多个栏位，“删除”可一次删除（删除仅限韩国员工和管理员，中国负责人只能批量修改中方栏位）。</li></ul><h3>5. 中国负责人的操作</h3><ul><li>请填写：工厂、可否换标签（可以 / 不可以 / 未确认）、中国仓库到货日、中国工厂发货日、预计韩国入库日（确定 / 预计）、运单号、中文备注。</li><li>首次填写运单号后，状态会自动变为“已发货·运输中”。韩方的状态栏中国负责人不能直接修改。</li><li>有疑问请在详情窗口下方的留言栏留言，韩国员工可以看到。也可以上传照片。</li></ul><h3>6. 自动功能</h3><ul><li>出入库表格中录入入库数量后，对应订单会自动变为“已入库”（与表格关联的商品，如 LESSETTER 等）。</li><li>与销售看板关联，会显示近7天销量、累计销量和当前库存。商品名称不一致无法匹配时，可能不显示。</li><li>其他人修改的内容几秒内会自动同步到画面上。</li></ul><h3>7. 注意事项</h3><ul><li>多人同时修改同一栏位时，以最后保存的值为准。</li><li>如果无法保存，画面上方会显示连接状态，请检查网络后重试。</li><li>如有问题或错误，请联系负责人。</li></ul>"};
+var HELP={ko:"<h3>1. 시작하기</h3><ul><li>주소로 접속해 이름과 공통 암호를 입력하면 들어갈 수 있어요. 암호는 외부에 공유하지 마세요.</li><li>오른쪽 위에서 언어(한국어 / 中文)와 역할을 고를 수 있어요. 한국 직원은 '한국 직원', 중국 담당자는 '中国负责人'을 선택하세요.</li><li>'마스터'는 마스터 암호를 입력하면 한국·중국 칸을 모두 수정할 수 있어요.</li></ul><h3>2. 화면 보는 법</h3><ul><li>맨 위 칩은 상태별 주문 건수와 수량이에요. 칩을 누르면 그 상태만 모아 볼 수 있어요.</li><li>탭은 '주문 목록' / '도착 일정' / '구매 내역'이 있고, 검색창에서 상품명·색상·메모 등으로 찾을 수 있어요.</li><li>브랜드(LOVLOV / LESSETTER) 버튼으로 브랜드별로 나눠 볼 수 있어요.</li><li>목록은 상품별로 묶여 있고, 각 줄은 색상·사이즈 옵션이에요. 차수 아래 작은 글씨는 주문 날짜, 수량 아래 파란 글씨는 현재고예요.</li></ul><h3>3. 상태 흐름</h3><ul><li>발주 전 → 발주 완료 → 생산 중 → 생산 완료 → 출고·운송 중 → 입고 완료 순서로 진행돼요. 멈춰 있는 건은 '보류'를 써요.</li><li>'발주 전'은 수량만 계획해 두고 아직 공장에 주문하지 않은 상태예요.</li></ul><h3>4. 한국 직원이 하는 일</h3><ul><li>옵션 줄을 누르면 오른쪽에 상세창이 열려요. 색상·사이즈·수량·차수·주문날짜·결제·구매자·상태·메모를 바꾸면 칸을 벗어날 때 자동 저장돼요.</li><li>상품 이름(제목)을 누르면 그 상품의 모든 옵션을 한 번에 수정하는 창이 열려요. 사진과 판매 추이·재고도 여기서 볼 수 있어요.</li><li>'색상 추가' 버튼은 같은 상품에 옵션을 더하고, 오른쪽 위 '+ 주문 추가'는 새 상품을 등록해요.</li><li>'선택' 버튼을 누르면 체크박스가 생겨요. 여러 줄(또는 상품 전체)을 체크하고 아래 바에서 상태를 고른 뒤 '상태 변경'을 누르면 한 번에 바뀌어요. 같은 바의 '일괄 수정'으로 운송장번호·출고일 같은 여러 칸을 한 번에 바꾸고, '삭제'로 한 번에 지울 수 있어요(삭제는 한국 직원·마스터만, 중국 담당자는 중국 담당 칸만 일괄 수정).</li></ul><h3>5. 중국 담당자가 하는 일</h3><ul><li>생산처, 라벨 교체(갈이) 가능 여부(가능 / 불가 / 미확인), 중국 창고 도착일, 중국 공장 출고일, 한국 입고 예정일(확정 / 예상), 운송장번호, 중국어 메모를 입력해요.</li><li>운송장번호를 처음 입력하면 상태가 자동으로 '출고·운송 중'으로 바뀌어요. 수량을 나눠 보내면 '+ 운송장 추가'로 운송장번호를 여러 개 넣고 각각 수량을 적으세요. 한국 쪽 상태 칸은 중국 담당자가 직접 바꿀 수 없어요.</li><li>궁금한 점은 상세창 아래 메시지 칸에 남기면 한국 직원이 볼 수 있어요. 사진도 올릴 수 있어요.</li></ul><h3>6. 자동으로 되는 것</h3><ul><li>입출고 시트에 입고 수량이 들어오면 해당 주문이 '입고 완료'로 자동 변경돼요(레세터 등 시트와 연결된 상품).</li><li>판매 대시보드와 연결되어 최근 7일 판매, 누적 판매, 현재고가 표시돼요. 상품명이 달라 매칭되지 않으면 표시되지 않을 수 있어요.</li><li>다른 사람이 수정한 내용은 몇 초 안에 자동으로 화면에 반영돼요.</li></ul><h3>7. 알아두세요</h3><ul><li>같은 칸을 동시에 고치면 마지막에 저장한 값이 적용돼요.</li><li>저장이 안 되면 화면 위에 연결 상태가 표시돼요. 연결을 확인한 뒤 다시 시도하세요.</li><li>문의나 오류는 담당자에게 알려 주세요.</li></ul>",zh:"<h3>1. 如何开始</h3><ul><li>打开网址，输入姓名和共用密码即可进入。请勿向外部泄露密码。</li><li>右上角可选择语言（한국어 / 中文）和身份。韩国员工选“한국 직원”，中国负责人选“中国负责人”。</li><li>“마스터”（管理员）需输入管理员密码，可修改韩方和中方的所有栏位。</li></ul><h3>2. 界面说明</h3><ul><li>最上方的标签显示各状态的订单数和数量，点击标签可只查看该状态。</li><li>有“订单列表 / 到货日程 / 采购记录”三个标签页，搜索框可按商品名、颜色、备注等查找。</li><li>可用品牌按钮（LOVLOV / LESSETTER）按品牌筛选。</li><li>列表按商品分组，每一行是颜色·尺码选项。批次下面的小字是下单日期，数量下面的蓝色小字是当前库存。</li></ul><h3>3. 状态流程</h3><ul><li>按“待下单 → 已下单 → 生产中 → 生产完成 → 已发货·运输中 → 已入库”顺序进行；暂时停止的订单使用“暂缓”。</li><li>“待下单”表示只是计划了数量，还没有向工厂下单。</li></ul><h3>4. 韩国员工的操作</h3><ul><li>点击选项行，右侧会打开详情窗口。修改颜色、尺码、数量、批次、下单日期、付款、采购人、状态、备注后，离开该栏位即自动保存。</li><li>点击商品名称（标题），会打开该商品所有选项的批量修改窗口，也可以查看照片、销售趋势和库存。</li><li>“색상 추가”按钮用于给同一商品增加选项，右上角“+ 주문 추가”用于登记新商品。</li><li>点击“선택”按钮会出现复选框。勾选多行（或整个商品），在下方栏选择状态后点击“상태 변경”，即可一次性修改。同一栏的“批量修改”可一次修改运单号、发货日期等多个栏位，“删除”可一次删除（删除仅限韩国员工和管理员，中国负责人只能批量修改中方栏位）。</li></ul><h3>5. 中国负责人的操作</h3><ul><li>请填写：工厂、可否换标签（可以 / 不可以 / 未确认）、中国仓库到货日、中国工厂发货日、预计韩国入库日（确定 / 预计）、运单号、中文备注。</li><li>首次填写运单号后，状态会自动变为“已发货·运输中”。如果分批发货，请点“+ 添加运单”填写多个运单号及各自数量。韩方的状态栏中国负责人不能直接修改。</li><li>有疑问请在详情窗口下方的留言栏留言，韩国员工可以看到。也可以上传照片。</li></ul><h3>6. 自动功能</h3><ul><li>出入库表格中录入入库数量后，对应订单会自动变为“已入库”（与表格关联的商品，如 LESSETTER 等）。</li><li>与销售看板关联，会显示近7天销量、累计销量和当前库存。商品名称不一致无法匹配时，可能不显示。</li><li>其他人修改的内容几秒内会自动同步到画面上。</li></ul><h3>7. 注意事项</h3><ul><li>多人同时修改同一栏位时，以最后保存的值为准。</li><li>如果无法保存，画面上方会显示连接状态，请检查网络后重试。</li><li>如有问题或错误，请联系负责人。</li></ul>"};
 var S={sel:{},selMode:false,buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
 var $=function(id){return document.getElementById(id)};
@@ -480,6 +481,7 @@ function openGroup(k){
 function groupChange(el){
   var k=el.dataset.k,v=el.value;if(v==='__mixed')return;
   if(el.type==='text')v=String(v).trim();
+  if(k==='tracking'){grpRows(S.grp).forEach(function(o){var u=shipUnion(o,v);if(u)save(o.id,{shipments:u,tracking:shipJoin(u)})});return}
   grpRows(S.grp).forEach(function(o){
     var cur=k==='etaConf'?confOf(o):(k==='status'?(STATUS.indexOf(o.status)>=0?o.status:'draft'):String(o[k]==null?'':o[k]));
     if(cur!==String(v)){var p={};p[k]=v;save(o.id,p)}
@@ -673,6 +675,7 @@ function bulkApply(){
   ids.forEach(function(id){
     var o=byId(id);if(!o)return;var p={};
     keys.forEach(function(k){
+      if(k==='tracking'){var u=shipUnion(o,vals[k]);if(u){p.shipments=u;p.tracking=shipJoin(u)}return}
       var cur=k==='etaConf'?confOf(o):(k==='status'?(STATUS.indexOf(o.status)>=0?o.status:'draft'):String(o[k]==null?'':o[k]));
       if(cur!==String(vals[k]))p[k]=vals[k];
     });
@@ -781,9 +784,30 @@ function renderAll(){
 }
 
 /* drawer */
+function shipsOf(o){if(Array.isArray(o.shipments))return o.shipments.filter(Boolean);return String(o.tracking||'').split(/[,;\n]+/).map(function(x){return x.trim()}).filter(Boolean).map(function(n){return {no:n}})}
+function shipJoin(a){return a.map(function(x){return x.no}).filter(Boolean).join(', ')}
+function shipUnion(o,txt){var cur=shipsOf(o),ch=false;String(txt==null?'':txt).split(/[,;\n]+/).map(function(x){return x.trim()}).filter(Boolean).forEach(function(n){if(!cur.some(function(x){return x.no===n})){cur=cur.concat([{no:n}]);ch=true}});return ch?cur:null}
+function shipRowHTML(x,dis){x=x||{};return '<div class="shrow"><input data-sh="no" placeholder="'+esc(t('shipNo'))+'" value="'+esc(x.no||'')+'"'+dis+'><input data-sh="qty" type="number" min="0" inputmode="numeric" placeholder="'+esc(t('shipQty'))+'" value="'+esc(x.qty==null?'':x.qty)+'"'+dis+'><input data-sh="date" type="date" value="'+esc(x.date||'')+'"'+dis+'><button type="button" class="x" data-shdel="1" aria-label="'+esc(t('del'))+'"'+dis+'>×</button></div>'}
+function shipInner(o,dis){var a=shipsOf(o),sum=0;a.forEach(function(x){sum+=num(x.qty)});var rows=(a.length?a:[{}]).map(function(x){return shipRowHTML(x,dis)}).join('');return '<div id="shipRows">'+rows+'</div>'+(dis?'':'<button type="button" class="btn" data-shadd="1">'+esc(t('shipAdd'))+'</button>')+'<small id="shipSum" style="display:block;margin-top:6px;color:var(--fg2)">'+(sum?esc(t('shipSum').replace('{a}',fmtN(sum)).replace('{b}',fmtN(num(o.qty)))):esc(t('shipHint')))+'</small>'}
+function shipBoxHTML(o,dis){return '<div class="fld full shipbox" id="shipBox" data-sig="'+esc(JSON.stringify(shipsOf(o)))+'"><label>'+esc(t('f_tracking'))+'</label>'+shipInner(o,dis)+'</div>'}
+function shipSave(){
+  var id=S.openId,o=byId(id);if(!o)return;
+  var rows=document.querySelectorAll('#shipRows .shrow'),arr=[],sum=0;
+  rows.forEach(function(r){
+    var no=r.querySelector('[data-sh=no]').value.trim(),q=r.querySelector('[data-sh=qty]').value,d=r.querySelector('[data-sh=date]').value;
+    if(!no&&q==='')return;
+    var x={no:no};if(q!==''){x.qty=Math.max(0,Number(q));sum+=x.qty}if(d)x.date=d;arr.push(x);
+  });
+  var p={shipments:arr,tracking:shipJoin(arr)};if(sum>0)p.shippedQty=sum;
+  var bx=$('shipBox');if(bx)bx.setAttribute('data-sig',JSON.stringify(arr));
+  var sm=$('shipSum');if(sm)sm.textContent=sum?t('shipSum').replace('{a}',fmtN(sum)).replace('{b}',fmtN(num(o.qty))):t('shipHint');
+  if(JSON.stringify(shipsOf(o))===JSON.stringify(arr)&&String(o.tracking||'')===p.tracking)return;
+  save(id,p);
+}
 function fieldHTML(f,o,side){
   var k=f[0],type=f[1],dis=(!S.canWrite||(side!=='both'&&S.role!=='master'&&S.role!==side))?' disabled':'',v=o[k]==null?'':o[k],lab='<label for="f_'+k+'">'+esc(t('f_'+k))+'</label>',full=(type==='area'||k==='tracking')?' full':'';
   var inp;
+  if(k==='tracking')return shipBoxHTML(o,dis);
   if(type==='area')inp='<textarea id="f_'+k+'" data-k="'+k+'"'+dis+'>'+esc(v)+'</textarea>';
   else if(type==='brand')inp='<select id="f_'+k+'" data-k="'+k+'"'+dis+'>'+['lovlov','lessetter'].map(function(b){return '<option value="'+b+'"'+(brandOf(o)===b?' selected':'')+'>'+esc(t('b_'+b))+'</option>'}).join('')+'</select>';
   else if(type==='pay')inp='<select id="f_'+k+'" data-k="'+k+'"'+dis+'>'+payList([String(v)]).map(function(c){return '<option value="'+esc(c)+'"'+(String(v)===c?' selected':'')+'>'+esc(c||'—')+'</option>'}).join('')+'</select>';
@@ -816,6 +840,7 @@ function syncDrawer(first){
   var ae=document.activeElement;
   $('dTitle').textContent=nameOf(o)||'—';
   $('dSub').textContent=[colorOf(o),sizeOf(o),o.qty!=null?fmtN(num(o.qty))+t('unit'):''].filter(Boolean).join(' · ');
+  var sb=$('shipBox');if(sb&&!sb.contains(ae)){var sg=JSON.stringify(shipsOf(o));if(sb.getAttribute('data-sig')!==sg){var dsb=sb.querySelector('[data-sh]')&&sb.querySelector('[data-sh]').disabled?' disabled':'';sb.innerHTML='<label>'+esc(t('f_tracking'))+'</label>'+shipInner(o,dsb);sb.setAttribute('data-sig',sg)}}
   var ds=$('dBody').querySelectorAll('[data-k]');
   for(var i=0;i<ds.length;i++){
     var el=ds[i],k=el.getAttribute('data-k');if(el===ae)continue;
@@ -945,6 +970,8 @@ document.addEventListener('click',function(e){
   if(el.dataset&&el.dataset.bm){S.buyMode=el.dataset.bm;renderBuy();return}
   if(el.dataset&&el.dataset.b){S.brand=el.dataset.b;lsSet('lvBrand',S.brand);renderAll();return}
   if(el.dataset&&el.dataset.f){S.filter=el.dataset.f;if(S.tab!=='list'){S.tab='list';location.hash='list'}renderAll();return}
+  if(el.dataset&&el.dataset.shadd!==undefined){var rr=$('shipRows');if(rr){var dv=document.createElement('div');dv.innerHTML=shipRowHTML({},'');rr.appendChild(dv.firstChild);var fi=rr.lastChild.querySelector('input');if(fi)fi.focus()}return}
+  if(el.dataset&&el.dataset.shdel!==undefined){var sr=el.closest('.shrow');if(sr){sr.remove();shipSave()}return}
   if(el.dataset&&el.dataset.gsel){var gr=grpRows(el.dataset.gsel).filter(matches),all=gr.every(function(o){return S.sel[o.id]});gr.forEach(function(o){S.sel[o.id]=!all});renderList();return}
   if(el.dataset&&el.dataset.grp){openGroup(el.dataset.grp);return}
   if(el.classList.contains('row')){if(S.selMode){S.sel[el.dataset.id]=!S.sel[el.dataset.id];renderList();return}openDrawer(el.dataset.id);return}
@@ -981,6 +1008,7 @@ document.addEventListener('click',function(e){
 function reopen(){var id=S.openId;closeDrawer();if(id)openDrawer(id)}
 document.addEventListener('change',function(e){
   var el=e.target;
+  if(el.dataset&&el.dataset.sh!==undefined&&S.openId){shipSave();return}
   if(el.id==='phFile'){var pf=el.files&&el.files[0];el.value='';if(pf)uploadPhoto(pf);return}
   if(el.dataset&&el.dataset.gk&&S.grp){groupChange(el);return}
   if(!el.dataset||!el.dataset.k||!S.openId)return;
