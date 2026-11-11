@@ -953,11 +953,14 @@ S.brand=['lovlov','lessetter'].indexOf(lsGet('lvBrand'))>=0?lsGet('lvBrand'):'al
 S.lang=lsGet('lvLang')==='zh'?'zh':(lsGet('lvLang')==='ko'?'ko':(S.role==='cn'?'zh':'ko'));
 S.tab=tabFromHash();
 renderAll();
-$('loginForm').addEventListener('submit',function(e){e.preventDefault();var n=$('lgName').value.trim(),p=$('lgPass').value;if(!n||!p)return;$('lgErr').hidden=true;tryLogin(p,n,false)});
+$('loginForm').addEventListener('submit',function(e){e.preventDefault();var n=$('lgName').value.trim(),p=$('lgPass').value;if(!n||!p)return;$('lgErr').hidden=true;tryLogin(p,n,false).then(function(ok){if(!ok)$('lgPass').closest('.fld').hidden=false})});
 $('logoutBtn').addEventListener('click',function(){logout(false)});
 document.addEventListener('visibilitychange',function(){if(!document.hidden)poll()});
-var sp=lsGet('lvPass'),sn=lsGet('lvName');if(sn)$('lgName').value=sn;
-if(sp&&sn)tryLogin(sp,sn,true);
+var sp=lsGet('lvPass'),sn=lsGet('lvName'),lk='';
+try{var km=location.hash.match(/[#&]k=([^&]+)/);if(km){lk=decodeURIComponent(km[1]);sp=lk;history.replaceState(null,'',location.pathname+location.search)}}catch(e){}
+if(sn)$('lgName').value=sn;
+function lkShow(){if(lk){$('lgPass').value=lk;$('lgPass').closest('.fld').hidden=true}}
+if(sp&&sn){tryLogin(sp,sn,true).then(function(ok){if(!ok){$('lgPass').closest('.fld').hidden=false}})}else lkShow();
 })();
 </script>
 </body>
