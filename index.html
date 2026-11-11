@@ -192,6 +192,7 @@ label.btn{cursor:pointer;display:inline-block}
 dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);padding:18px;width:min(420px,calc(100vw - 32px))}
 dialog::backdrop{background:rgba(10,8,20,.45)}
 dialog h2{margin:0 0 12px;font-size:16px}
+#helpDlg{width:min(720px,calc(100vw - 32px));max-height:86vh;overflow:hidden;flex-direction:column}#helpDlg[open]{display:flex}.helpbody{overflow:auto;flex:1;padding-right:6px;font-size:14px;line-height:1.6}.helpbody h3{margin:16px 0 4px;font-size:14px}.helpbody h3:first-child{margin-top:0}.helpbody ul{margin:0;padding-left:20px}.helpbody li{margin:3px 0}
 dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
 .chk{display:inline-block;flex:0 0 18px;width:18px;height:18px;border:2px solid var(--fg2);border-radius:4px;margin-right:8px;vertical-align:middle;position:relative}
 .chk.on{background:var(--fg);border-color:var(--fg)}
@@ -234,6 +235,7 @@ dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
       <button type="button" id="langKO" aria-pressed="true">한국어</button>
       <button type="button" id="langZH" aria-pressed="false">中文</button>
     </div>
+    <button type="button" class="btn" id="helpBtn"></button>
     <button type="button" class="btn" id="logoutBtn" hidden></button>
   </div>
 </div></div>
@@ -268,6 +270,7 @@ dialog .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
 
 <div id="layer"></div>
 
+<dialog id="helpDlg"><h2 id="helpTitle"></h2><div id="helpBody" class="helpbody"></div><div class="actions"><button type="button" class="btn primary" id="helpClose"></button></div></dialog>
 <dialog id="newDlg">
   <h2 id="ndTitle"></h2>
   <form id="ndForm" method="dialog">
@@ -310,7 +313,7 @@ var I18N={
   f_factory:'생산처',f_shipDate:'출고일',f_eta:'도착 예정일',f_etaConf:'날짜 상태',f_shippedQty:'출고 수량',f_tracking:'운송장번호',f_labelSwap:'라벨 교체(갈이)',ls_yes:'가능',ls_no:'불가',ls_unk:'미확인',grpMixed:'여러 값',grpHint:'아래 칸을 바꾸면 이 상품의 모든 옵션에 한꺼번에 적용돼요.',grpOpts:'옵션별 보기',salesTitle:'판매 추이',salesSince:'10월~ 누적 판매',sales7:'최근 7일',salesAvg:'일평균(7일)',stockAvail:'가용 재고',stockQty:'재고',cover:'재고 소진 예상',daysUnit:'일',sColor:'컬러',sSize:'사이즈',noSales:'매칭되는 판매 데이터가 없어요. (상품명이 판매 대시보드와 다를 수 있어요)',salesLoading:'판매 데이터를 불러오는 중…',salesFail:'판매 데이터를 불러오지 못했어요.',openDash:'판매 대시보드 열기',f_noteZh:'중국 메모',
   blkKR:'한국 입력',blkCN:'중국 입력',ro:'읽기 전용',status:'진행 상태',
   msgs:'메시지',msgPh:'이 주문에 대해 남길 말 (Enter 전송, Shift+Enter 줄바꿈)',send:'보내기',noMsgs:'아직 메시지가 없어요.',
-  saved:'저장했어요',stkNow:'현재고',selMode:'선택',selDone:'선택 종료',selN:'{n}건 선택',selApply:'상태 변경',selAll:'전체 선택',selNone:'선택 해제',selConfirm:'{n}건의 상태를 "{s}"(으)로 바꿀까요?',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
+  saved:'저장했어요',helpBtn:'사용방법',helpTitle:'사용방법',helpClose:'닫기',stkNow:'현재고',selMode:'선택',selDone:'선택 종료',selN:'{n}건 선택',selApply:'상태 변경',selAll:'전체 선택',selNone:'선택 해제',selConfirm:'{n}건의 상태를 "{s}"(으)로 바꿀까요?',saveFail:'저장하지 못했어요. 권한이나 연결을 확인해 주세요.',
   empty:'등록된 주문이 없어요',emptyHint:'오른쪽 위 "주문 추가"로 첫 주문을 등록하세요.',emptyFilter:'조건에 맞는 주문이 없어요',
   conn_wait:'연결 중…',conn_live:'실시간 공유 중',conn_slow:'연결이 느려요. 표시된 내용이 최신이 아닐 수 있어요',conn_off:'데이터에 연결할 수 없어요',
   readonlyBanner:'보기 전용 권한이에요. 입력하려면 편집 권한(기여자 이상)이 필요해요.',offlineBanner:'서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.',
@@ -334,7 +337,7 @@ var I18N={
   f_factory:'工厂',f_shipDate:'发货日期',f_eta:'预计到货日',f_etaConf:'日期状态',f_shippedQty:'发货数量',f_tracking:'运单号',f_labelSwap:'可换标签',ls_yes:'可以',ls_no:'不可以',ls_unk:'未确认',grpMixed:'多个值',grpHint:'修改下方内容将一次性应用到该商品的所有选项。',grpOpts:'按选项查看',salesTitle:'销售趋势',salesSince:'10月起累计销量',sales7:'近7天',salesAvg:'日均(7天)',stockAvail:'可用库存',stockQty:'库存',cover:'预计可售天数',daysUnit:'天',sColor:'颜色',sSize:'尺码',noSales:'没有匹配的销售数据。',salesLoading:'正在加载销售数据…',salesFail:'无法加载销售数据。',openDash:'打开销售看板',f_noteZh:'中方备注',
   blkKR:'韩方填写',blkCN:'中方填写',ro:'只读',status:'当前进度',
   msgs:'留言',msgPh:'针对此订单留言（Enter 发送，Shift+Enter 换行）',send:'发送',noMsgs:'还没有留言。',
-  saved:'已保存',stkNow:'当前库存',selMode:'选择',selDone:'结束选择',selN:'已选{n}项',selApply:'修改状态',selAll:'全选',selNone:'取消选择',selConfirm:'将{n}项的状态改为“{s}”？',saveFail:'保存失败，请检查权限或网络。',
+  saved:'已保存',helpBtn:'使用说明',helpTitle:'使用说明',helpClose:'关闭',stkNow:'当前库存',selMode:'选择',selDone:'结束选择',selN:'已选{n}项',selApply:'修改状态',selAll:'全选',selNone:'取消选择',selConfirm:'将{n}项的状态改为“{s}”？',saveFail:'保存失败，请检查权限或网络。',
   empty:'还没有订单',emptyHint:'点击右上角“新增订单”登记第一笔。',emptyFilter:'没有符合条件的订单',
   conn_wait:'连接中…',conn_live:'实时共享中',conn_slow:'连接较慢，显示内容可能不是最新',conn_off:'无法连接数据',
   readonlyBanner:'当前为只读权限。需要编辑权限（贡献者及以上）才能填写。',offlineBanner:'无法连接服务器，请检查网络连接。',
@@ -351,6 +354,7 @@ var SIZE_ZH={'free':'均码','one size':'均码','onesize':'均码'};
 var KR_FIELDS=[['color','text'],['size','text'],['qty','number'],['round','text'],['orderDate','date'],['style','text'],['manager','text'],['purchaser','text','purchasers'],['payment','pay'],['receivedQty','number'],['defectQty','number'],['noteKo','area']];
 var CN_FIELDS=[['factory','text'],['labelSwap','lswap'],['shipDate','date'],['eta','date'],['etaConf','conf'],['shippedQty','number'],['tracking','text'],['noteZh','area']];
 
+var HELP={ko:"<h3>1. 시작하기</h3><ul><li>주소로 접속해 이름과 공통 암호를 입력하면 들어갈 수 있어요. 암호는 외부에 공유하지 마세요.</li><li>오른쪽 위에서 언어(한국어 / 中文)와 역할을 고를 수 있어요. 한국 직원은 '한국 직원', 중국 담당자는 '中国负责人'을 선택하세요.</li><li>'마스터'는 마스터 암호를 입력하면 한국·중국 칸을 모두 수정할 수 있어요.</li></ul><h3>2. 화면 보는 법</h3><ul><li>맨 위 칩은 상태별 주문 건수와 수량이에요. 칩을 누르면 그 상태만 모아 볼 수 있어요.</li><li>탭은 '주문 목록' / '도착 일정' / '구매 내역'이 있고, 검색창에서 상품명·색상·메모 등으로 찾을 수 있어요.</li><li>브랜드(LOVLOV / LESSETTER) 버튼으로 브랜드별로 나눠 볼 수 있어요.</li><li>목록은 상품별로 묶여 있고, 각 줄은 색상·사이즈 옵션이에요. 차수 아래 작은 글씨는 주문 날짜, 수량 아래 파란 글씨는 현재고예요.</li></ul><h3>3. 상태 흐름</h3><ul><li>발주 전 → 발주 완료 → 생산 중 → 생산 완료 → 출고·운송 중 → 입고 완료 순서로 진행돼요. 멈춰 있는 건은 '보류'를 써요.</li><li>'발주 전'은 수량만 계획해 두고 아직 공장에 주문하지 않은 상태예요.</li></ul><h3>4. 한국 직원이 하는 일</h3><ul><li>옵션 줄을 누르면 오른쪽에 상세창이 열려요. 색상·사이즈·수량·차수·주문날짜·결제·구매자·상태·메모를 바꾸면 칸을 벗어날 때 자동 저장돼요.</li><li>상품 이름(제목)을 누르면 그 상품의 모든 옵션을 한 번에 수정하는 창이 열려요. 사진과 판매 추이·재고도 여기서 볼 수 있어요.</li><li>'색상 추가' 버튼은 같은 상품에 옵션을 더하고, 오른쪽 위 '+ 주문 추가'는 새 상품을 등록해요.</li><li>'선택' 버튼을 누르면 체크박스가 생겨요. 여러 줄(또는 상품 전체)을 체크하고 아래 바에서 상태를 고른 뒤 '상태 변경'을 누르면 한 번에 바뀌어요.</li></ul><h3>5. 중국 담당자가 하는 일</h3><ul><li>생산처, 라벨 교체(갈이) 가능 여부(가능 / 불가 / 미확인), 출고일, 도착 예정일(확정 / 예상), 운송장번호, 중국어 메모를 입력해요.</li><li>운송장번호를 처음 입력하면 상태가 자동으로 '출고·운송 중'으로 바뀌어요. 한국 쪽 상태 칸은 중국 담당자가 직접 바꿀 수 없어요.</li><li>궁금한 점은 상세창 아래 메시지 칸에 남기면 한국 직원이 볼 수 있어요. 사진도 올릴 수 있어요.</li></ul><h3>6. 자동으로 되는 것</h3><ul><li>입출고 시트에 입고 수량이 들어오면 해당 주문이 '입고 완료'로 자동 변경돼요(레세터 등 시트와 연결된 상품).</li><li>판매 대시보드와 연결되어 최근 7일 판매, 누적 판매, 현재고가 표시돼요. 상품명이 달라 매칭되지 않으면 표시되지 않을 수 있어요.</li><li>다른 사람이 수정한 내용은 몇 초 안에 자동으로 화면에 반영돼요.</li></ul><h3>7. 알아두세요</h3><ul><li>같은 칸을 동시에 고치면 마지막에 저장한 값이 적용돼요.</li><li>저장이 안 되면 화면 위에 연결 상태가 표시돼요. 연결을 확인한 뒤 다시 시도하세요.</li><li>문의나 오류는 담당자에게 알려 주세요.</li></ul>",zh:"<h3>1. 如何开始</h3><ul><li>打开网址，输入姓名和共用密码即可进入。请勿向外部泄露密码。</li><li>右上角可选择语言（한국어 / 中文）和身份。韩国员工选“한국 직원”，中国负责人选“中国负责人”。</li><li>“마스터”（管理员）需输入管理员密码，可修改韩方和中方的所有栏位。</li></ul><h3>2. 界面说明</h3><ul><li>最上方的标签显示各状态的订单数和数量，点击标签可只查看该状态。</li><li>有“订单列表 / 到货日程 / 采购记录”三个标签页，搜索框可按商品名、颜色、备注等查找。</li><li>可用品牌按钮（LOVLOV / LESSETTER）按品牌筛选。</li><li>列表按商品分组，每一行是颜色·尺码选项。批次下面的小字是下单日期，数量下面的蓝色小字是当前库存。</li></ul><h3>3. 状态流程</h3><ul><li>按“待下单 → 已下单 → 生产中 → 生产完成 → 已发货·运输中 → 已入库”顺序进行；暂时停止的订单使用“暂缓”。</li><li>“待下单”表示只是计划了数量，还没有向工厂下单。</li></ul><h3>4. 韩国员工的操作</h3><ul><li>点击选项行，右侧会打开详情窗口。修改颜色、尺码、数量、批次、下单日期、付款、采购人、状态、备注后，离开该栏位即自动保存。</li><li>点击商品名称（标题），会打开该商品所有选项的批量修改窗口，也可以查看照片、销售趋势和库存。</li><li>“색상 추가”按钮用于给同一商品增加选项，右上角“+ 주문 추가”用于登记新商品。</li><li>点击“선택”按钮会出现复选框。勾选多行（或整个商品），在下方栏选择状态后点击“상태 변경”，即可一次性修改。</li></ul><h3>5. 中国负责人的操作</h3><ul><li>请填写：工厂、可否换标签（可以 / 不可以 / 未确认）、发货日期、预计到货日（确定 / 预计）、运单号、中文备注。</li><li>首次填写运单号后，状态会自动变为“已发货·运输中”。韩方的状态栏中国负责人不能直接修改。</li><li>有疑问请在详情窗口下方的留言栏留言，韩国员工可以看到。也可以上传照片。</li></ul><h3>6. 自动功能</h3><ul><li>出入库表格中录入入库数量后，对应订单会自动变为“已入库”（与表格关联的商品，如 LESSETTER 等）。</li><li>与销售看板关联，会显示近7天销量、累计销量和当前库存。商品名称不一致无法匹配时，可能不显示。</li><li>其他人修改的内容几秒内会自动同步到画面上。</li></ul><h3>7. 注意事项</h3><ul><li>多人同时修改同一栏位时，以最后保存的值为准。</li><li>如果无法保存，画面上方会显示连接状态，请检查网络后重试。</li><li>如有问题或错误，请联系负责人。</li></ul>"};
 var S={sel:{},selMode:false,buyMode:'todo',brand:'all',lang:'ko',role:'kr',orders:[],msgs:[],filter:'open',q:'',tab:'list',openId:null,canWrite:true,conn:'wait',loaded:false,authed:false,thumbs:{},fullCache:{}};
 var SB_URL='https://cowldnolxmmfzdhqpmrg.supabase.co',SB_KEY='sb_publishable_Tpv_X8GtD6EYagdpyxseXQ_5196Xd_a',pass='',uname='',pending=0,pollTimer=null,lastSig='',thumbSig='',delTimer=null,toastTimer=null;
 var $=function(id){return document.getElementById(id)};
@@ -697,7 +701,7 @@ function renderStatic(){
   document.title=t('ttl');
   $('ttl').textContent=t('ttl');$('sub').textContent=t('sub')+' · '+t('roleHint');
   $('tabList').textContent=t('tabList');$('tabArr').textContent=t('tabArr');$('tabBuy').textContent=t('tabBuy');
-  $('q').placeholder=t('search');$('addBtn').textContent=t('add');renderSelBar();
+  $('q').placeholder=t('search');$('addBtn').textContent=t('add');$('helpBtn').textContent=t('helpBtn');$('helpTitle').textContent=t('helpTitle');$('helpClose').textContent=t('helpClose');$('helpBody').innerHTML=HELP[S.lang]||HELP.ko;renderSelBar();
   $('roleKR').setAttribute('aria-pressed',S.role==='kr');$('roleCN').setAttribute('aria-pressed',S.role==='cn');$('roleMS').setAttribute('aria-pressed',S.role==='master');
   $('langKO').setAttribute('aria-pressed',S.lang==='ko');$('langZH').setAttribute('aria-pressed',S.lang==='zh');
   $('tabList').setAttribute('aria-selected',S.tab==='list');$('tabArr').setAttribute('aria-selected',S.tab==='arr');$('tabBuy').setAttribute('aria-selected',S.tab==='buy');
@@ -900,6 +904,8 @@ document.addEventListener('click',function(e){
     case 'selApply':selApplyNow();break;
     case 'selAll':S.orders.filter(matches).forEach(function(o){S.sel[o.id]=true});renderList();break;
     case 'selCancel':selClear();renderList();break;
+    case 'helpBtn':$('helpDlg').showModal();$('helpBody').scrollTop=0;break;
+    case 'helpClose':$('helpDlg').close();break;
     case 'addBtn':S.addStyle='';$('ndForm').reset();$('ndBrand').value=S.brand==='lessetter'?'lessetter':'lovlov';$('ndStat').value='draft';$('newDlg').showModal();$('ndName').focus();break;
     case 'ndCancel':$('newDlg').close();break;
     case 'scrim':case 'dClose':closeDrawer();break;
