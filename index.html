@@ -444,7 +444,7 @@ function salesBlock(rows){
   return '<div class="blk">'+h3+tiles+chart+opt+link+'</div>';
 }
 
-function payList(vals){var l=['','상민','대표님','제3자송금(TT)'];(vals||[]).forEach(function(v){if(v&&l.indexOf(v)<0)l.push(v)});return l}
+function payList(vals){var l=['','상민','대표님','제3자송금(TT)','법인카드'];(vals||[]).forEach(function(v){if(v&&l.indexOf(v)<0)l.push(v)});return l}
 function grpRows(k){return S.orders.filter(function(o){return groupKey(o)===k})}
 function gFld(f,rows,side){
   var k=f[0],type=f[1],dis=(!S.canWrite||(side!=='both'&&S.role!=='master'&&S.role!==side))?' disabled':'',vs=[];
